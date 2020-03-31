@@ -11,61 +11,34 @@ namespace TarotFr.Domain
         private Color _color;
         private FaceValue _faceValue;
         private bool _isOudler;
-        private bool _isTrumper;
 
         public bool IsOudler() => _isOudler;
-        public bool IsTrumper() => _isTrumper;
+        public int Points() => _faceValue.GetPoints();
+        public string Color() => _color.GetColor();
+        public bool IsTrumper() => _color.IsTrumper();
 
         public Card(string color, int points)
         {
             _color = new Color(color);
             _faceValue = new FaceValue(points);
             _isOudler = checkOudler();
-            _isTrumper = checkTrumper();
-        }
-
-        public string Show()
-        {
-            return _faceValue.getPoints().ToString() + _color.GetName();
-        }
-
-        public Card Fight(Card opponentCard)
-        {
-            return ResolveFight(opponentCard);            
-        }
-
-        private Card ResolveFight(Card opposingCard)
-        {
-            //Card resultColorFight = CompareColors(opposingCard);
-            return (opposingCard.ComputePoints() > this.ComputePoints() ? opposingCard : this);
-        }
-
-        private int ComputePoints()
-        {
-            return _faceValue.getPoints();
+            checkConsistency();
         }
 
         private bool checkOudler()
         {
-            if(_color.GetName() == "trumps")
-            {
-                if (_faceValue.getPoints() == 1) return true;
-                if (_faceValue.getPoints() == 21) return true;
-                if (_faceValue.getPoints() == 0) return true;
-
-                return false;                
-            }
-            else { return false; }
+            List<int> oudlersPoints = new List<int> { 1, 21, 0 };        
+            return _color.IsTrumper() && oudlersPoints.Contains(_faceValue.GetPoints());            
         }
 
-        private bool checkTrumper()
+        private void checkConsistency()
         {
-            if (_color.GetName() == "trumps")
+            int points = _faceValue.GetPoints();
+            if (!_color.IsTrumper())
             {
-                if (_faceValue.getPoints() >= 0 && _faceValue.getPoints() <= 21) return true;
-                return false;
+                if (points > 14 ) throw new ArgumentOutOfRangeException("_faceValue",_faceValue.GetPoints(),"Invalid nbpoints for this card");
+                if (points == 0) throw new ArgumentOutOfRangeException("_faceValue", _faceValue.GetPoints(), "Invalid nbpoints for this card");
             }
-            else { return false; }
         }
     }
 }

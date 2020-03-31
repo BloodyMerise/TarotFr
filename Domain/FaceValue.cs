@@ -6,12 +6,14 @@ namespace TarotFr.Domain
 {
     internal class FaceValue
     {
-        private int pointNumber;
-        public int getPoints() => pointNumber;
+        private int _pointNumber;
 
-        public FaceValue(int nbpoints)
+        internal int GetPoints() => _pointNumber;
+
+        public FaceValue(int points)
         {
-            this.pointNumber = nbpoints;
-        }     
+            if (points > 21 || points < 0) throw new ArgumentOutOfRangeException("points", points, "wrong number of points");
+            _pointNumber = points;
+        }
     }
 }
