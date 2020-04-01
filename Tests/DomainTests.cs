@@ -42,25 +42,24 @@ namespace TarotFrTests
                 yield return new Card("trumpers", 1);
                 yield return new Card("trumpers", 21);
             }
-        }  
-        
+        }
+
         [TestCaseSource(nameof(TestCards), new object[] { false, false })]
         [TestCaseSource(nameof(TestCards), new object[] { false, true })]
         public void CanCreateAllCards(Card card)
-        {                        
+        {
             Assert.DoesNotThrow(() => new Card(card.Color(), card.Points()));
         }
 
         [Test]
         [TestCase("hearts", 15)]
         [TestCase("clubs", 0)]
-        [TestCase("trumpers", 22)]        
+        [TestCase("trumpers", 22)]
         [TestCase("clubs", -1)]
         [TestCase("rewe", -1)]
         public void CreateOnlyValidCards(string color, int point)
         {
-                Assert.Throws<ArgumentOutOfRangeException>(() => new Card(color, point) );
-                    
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Card(color, point));
         }
 
         [Test]
@@ -76,7 +75,6 @@ namespace TarotFrTests
             Assert.AreEqual(isOudler, testCard.IsOudler());
         }
 
-        [Test]
         [TestCase("hearts", 11, false)]
         [TestCase("trumpers", 11, true)]
         [TestCase("spades", 9, false)]
@@ -89,11 +87,27 @@ namespace TarotFrTests
             Assert.AreEqual(isTrumper, testCard.IsTrumper());
         }
 
+        [TestCaseSource(nameof(TestCards),new object [] {false, true})]
+        public void OudlerScoreIs5(Card testCard)
+        {
+            Assert.AreEqual(5, testCard.Score());
+        }
+        [TestCaseSource(nameof(TestCards), new object[] { true, false})]
+        public void BasicScore(Card testCard)
+        {
+            int score = testCard.Points() - 10;
+            score = (score > 0) ? testCard.Points() - 9 : 0;
+            Assert.AreEqual(score, testCard.Score());
+        }
+        [TestCase("trumpers", 11)]
+        public void TrumperScore0(string color,int point)
+        {
+            Card testCard = new Card(color, point);
+            Assert.AreEqual(0, testCard.Score());
+        }
 
 
 
-
-       
         /*
         [Test]
         [TestCase("trumpers", 1, true)]

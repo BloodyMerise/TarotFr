@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
 using System;
 
 namespace TarotFr.Domain
@@ -10,18 +9,21 @@ namespace TarotFr.Domain
     {
         private Color _color;
         private FaceValue _faceValue;
+        private CardScore _cardScore;
         private bool _isOudler;
 
         public bool IsOudler() => _isOudler;
         public int Points() => _faceValue.GetPoints();
         public string Color() => _color.GetColor();
         public bool IsTrumper() => _color.IsTrumper();
+        public int Score() => _cardScore.GetScore();
 
         public Card(string color, int points)
         {
             _color = new Color(color);
             _faceValue = new FaceValue(points);
             _isOudler = checkOudler();
+            _cardScore = new CardScore(_color.IsTrumper(), _isOudler, _faceValue);
             checkConsistency();
         }
 
