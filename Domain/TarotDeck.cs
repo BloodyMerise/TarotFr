@@ -26,7 +26,7 @@ namespace TarotFr.Domain
             }
         }
 
-        public IEnumerable<Card> SelectCards(string color, int? points)
+        public IEnumerable<Card> SelectCards(string color = null, int? points = null)
         {
             if (!points.HasValue && !String.IsNullOrEmpty(color))
             {
@@ -46,11 +46,14 @@ namespace TarotFr.Domain
             }
         }
 
+        public IEnumerable<Card> SelectCards(List<Card> cards)
+        {            
+            return cards.Intersect(_tarotDeck);
+        }
+
         public Card Pick(int index = -1)
         {
-            if (index < 0) return _tarotDeck.FirstOrDefault();
-            else if (index < _tarotDeck.Count()) return _tarotDeck[index];
-            else return _tarotDeck.FirstOrDefault();
+            return _tarotDeck.ElementAt(index);
         }
 
         public List<Card> Shuffle()

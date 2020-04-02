@@ -117,7 +117,15 @@ namespace TarotFrTests
             TarotDeck myTarotDeck = new TarotDeck();
             Assert.AreEqual(expectedNbCard, myTarotDeck.SelectCards(color,points).Count());
             Assert.AreEqual(totalScore, myTarotDeck.SelectCards(color, points).Select(x => x.Score()).Sum());
-            Assert.AreEqual(78, myTarotDeck.SelectCards(null,null).Count());
+            Assert.AreEqual(78, myTarotDeck.SelectCards().Count());
+        }
+
+        [TestCase(82)]
+        [TestCase(-1)]
+        public void TarotPickFailswithwrongINput(int index)
+        {
+            TarotDeck dek = new TarotDeck();
+            Assert.Throws<ArgumentOutOfRangeException>(() => dek.Pick(index));
         }
 
         [Test]
@@ -129,7 +137,19 @@ namespace TarotFrTests
             Assert.AreNotEqual(myDeck.Pick(2).ToString(), shuffleDeck.Pick(2).ToString());
         }
 
+        [Test]
+        public void CanSelectListOfCardsFromDeck()
+        {
+            TarotDeck dek = new TarotDeck();
+            List<Card> chosenCards = new List<Card>();
 
+            for(int i=0; i<4 ;i++)
+            {
+                dek.Shuffle();
+                chosenCards.Add(dek.Pick(i));
+            }
+            Assert.AreEqual(chosenCards, dek.SelectCards(chosenCards));
+        }
 
         /*
         [Test]
