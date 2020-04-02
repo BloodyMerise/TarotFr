@@ -8,7 +8,7 @@ namespace TarotFr.Domain
     {
         private string _name;
         private bool _isTrumper;
-        private static List<string> validColors = new List<string> { "hearts","spades","diamonds","clubs","trumpers" };
+        internal static List<string> validColors = new List<string> { "hearts","spades","diamonds","clubs","trumpers" };
      
         internal bool IsTrumper() => _isTrumper;
         private bool CheckValidColor(string color) => validColors.Contains(color.ToLower());

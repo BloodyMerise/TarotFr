@@ -92,6 +92,7 @@ namespace TarotFrTests
         {
             Assert.AreEqual(5, testCard.Score());
         }
+
         [TestCaseSource(nameof(TestCards), new object[] { true, false})]
         public void BasicScore(Card testCard)
         {
@@ -99,11 +100,33 @@ namespace TarotFrTests
             score = (score > 0) ? testCard.Points() - 9 : 0;
             Assert.AreEqual(score, testCard.Score());
         }
+
         [TestCase("trumpers", 11)]
         public void TrumperScore0(string color,int point)
         {
             Card testCard = new Card(color, point);
             Assert.AreEqual(0, testCard.Score());
+        }
+
+        [TestCase("hearts", null, 14, 14)]
+        [TestCase("", null, 78, 71)]
+        [TestCase("trumpers", null, 22, 15)]
+        [TestCase("", 1, 5, 5)]
+        public void TarotDeckIsCorrect(string color, int? points,int expectedNbCard,int totalScore)
+        {
+            TarotDeck myTarotDeck = new TarotDeck();
+            Assert.AreEqual(expectedNbCard, myTarotDeck.SelectCards(color,points).Count());
+            Assert.AreEqual(totalScore, myTarotDeck.SelectCards(color, points).Select(x => x.Score()).Sum());
+            Assert.AreEqual(78, myTarotDeck.SelectCards(null,null).Count());
+        }
+
+        [Test]
+        public void TarotDeckIsShuffledInPlace()
+        {
+            TarotDeck myDeck = new TarotDeck();
+            TarotDeck shuffleDeck = new TarotDeck();
+            shuffleDeck.Shuffle();
+            Assert.AreNotEqual(myDeck.Pick(2).ToString(), shuffleDeck.Pick(2).ToString());
         }
 
 

@@ -42,5 +42,10 @@ namespace TarotFr.Domain
                 if (points == 0) throw new ArgumentOutOfRangeException("_faceValue", _faceValue.GetPoints(), "Invalid nbpoints for this card");
             }
         }
+
+        public override string ToString()
+        {
+            return _color.GetColor() + _faceValue.GetPoints();
+        }
     }
 }
