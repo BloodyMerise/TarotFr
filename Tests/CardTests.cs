@@ -6,7 +6,7 @@ using System;
 
 namespace TarotFrTests
 {
-    public class DomainTests
+    public class CardTests
     {
         [SetUp]
         public void Setup()
@@ -117,8 +117,9 @@ namespace TarotFrTests
         {
             TarotDeck myTarotDeck = new TarotDeck();
             Assert.AreEqual(expectedNbCard, myTarotDeck.SelectCards(color,points).Count());
-            Assert.AreEqual(totalScore, myTarotDeck.SelectCards(color, points).Select(x => x.Score()).Sum());
             Assert.AreEqual(78, myTarotDeck.SelectCards().Count());
+            //Note that the below scoring is incorrect, this is just arithmetic sum of scores for each card
+            Assert.AreEqual(totalScore, myTarotDeck.SelectCards(color, points).Select(x => x.Score()).Sum());
         }
 
         [TestCase(82)]
@@ -185,7 +186,7 @@ namespace TarotFrTests
         [TestCase("hearts",14,5)]
         [TestCase("trumpers",0,5)]
         [TestCase("spades", 2,1)]
-        public void countScoreIsCorrect(string color, int points,int expectedScore)
+        public void CountScoreIsCorrect(string color, int points,int expectedScore)
         {
             Card basic = new Card("hearts",8);
             Card testCard = new Card(color, points);

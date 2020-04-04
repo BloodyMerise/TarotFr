@@ -64,7 +64,7 @@ namespace TarotFr.Domain
                 if (a.Color() == b.Color()) return true;
                 else if (a.IsTrumper()) return false;
                 else if (b.IsTrumper()) return false;
-                else return true;
+                else return true; // so 4spades == 4clubs
             }
         }
 

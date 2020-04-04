@@ -14,7 +14,6 @@ namespace TarotFr.Domain
         {
             if (points > 21 || points < 0) throw new ArgumentOutOfRangeException("points", points, "wrong number of points");
             _pointNumber = points;
-
         }
     }
 }
