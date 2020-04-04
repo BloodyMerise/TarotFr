@@ -51,6 +51,12 @@ namespace TarotFr.Domain
             return cards.Intersect(_tarotDeck);
         }
 
+        public IEnumerable<Card> SelectCards(int nbCards)
+        {
+            if (_tarotDeck.Count >= nbCards) return _tarotDeck.Take<Card>(nbCards);
+            else return null;
+        }
+
         public Card Pick(int index = -1)
         {
             return _tarotDeck.ElementAt(index);

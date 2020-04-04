@@ -17,6 +17,7 @@ namespace TarotFr.Domain
         public string Color() => _color.GetColor();
         public bool IsTrumper() => _color.IsTrumper();
         public int Score() => _cardScore.GetScore();
+        public int CountScore(Card card) => _cardScore.CountScore(card);
 
         public Card(string color, int points)
         {
@@ -43,9 +44,35 @@ namespace TarotFr.Domain
             }
         }
 
+        public static bool operator >(Card a, Card b)
+        {
+            if (a == b) return false;
+            else if (a.Points() == 0) return false;
+            else if (b.Points() == 0) return true;
+            else if (a.IsTrumper() && b.IsTrumper()) return (a.Points() > b.Points() ? true : false);
+            else if (a.IsTrumper() && !b.IsTrumper()) return true;
+            else if (!a.IsTrumper() && b.IsTrumper()) return false;
+            else return (a.Points() > b.Points() ? true : false);     
+        }
+
+        public static bool operator <(Card a, Card b) => (a == b) ? false : !(a > b);
+
+        public static bool operator ==(Card a, Card b)
+        {
+            if (a.Points() != b.Points()) return false;
+            else {
+                if (a.Color() == b.Color()) return true;
+                else if (a.IsTrumper()) return false;
+                else if (b.IsTrumper()) return false;
+                else return true;
+            }
+        }
+
+        public static bool operator !=(Card a, Card b) => !(a == b );
+        
         public override string ToString()
         {
-            return _color.GetColor() + _faceValue.GetPoints();
+            return _color.GetColor().Substring(0,1) + _faceValue.GetPoints().ToString();
         }
     }
 }

@@ -1,22 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TarotFr.Domain;
 
-namespace TarotFr.Domain
+namespace TarotFr.Api
 {
     class CardService : ICardService
     {
-        public Card CreateCard(string color, int faceValue)
-        {
-            return new Card(color, faceValue);
-        }
-
-        public Card FightCard(Card opponent)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string ShowCard(Card card)
+         public string ShowCard(Card card)
         {
             return card.ToString();
         }
@@ -26,11 +17,10 @@ namespace TarotFr.Domain
             return card1.Score + card2.Score;
         }*/
 
-
-       /* public Card FightCard(Card one, Card two)
+       public Card FightCard(Card one, Card two)
         {
             if (one > two) return one;
             else return two;
-        }*/
+        }
     }
 }

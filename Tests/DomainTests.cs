@@ -93,6 +93,7 @@ namespace TarotFrTests
             Assert.AreEqual(5, testCard.Score());
         }
 
+        [Test]
         [TestCaseSource(nameof(TestCards), new object[] { true, false})]
         public void BasicScore(Card testCard)
         {
@@ -122,7 +123,7 @@ namespace TarotFrTests
 
         [TestCase(82)]
         [TestCase(-1)]
-        public void TarotPickFailswithwrongINput(int index)
+        public void TarotDeckPickFailsWithWrongInput(int index)
         {
             TarotDeck dek = new TarotDeck();
             Assert.Throws<ArgumentOutOfRangeException>(() => dek.Pick(index));
@@ -150,40 +151,54 @@ namespace TarotFrTests
             }
             Assert.AreEqual(chosenCards, dek.SelectCards(chosenCards));
         }
-
-        /*
+        
         [Test]
         [TestCase("trumpers", 1, true)]
         [TestCase("trumpers", 8, true)]
         [TestCase("trumpers", 21, true)]
         [TestCase("trumpers", 0, false)]
-        public void TrumperBeatsBasic(string color, int points, bool expected)
+        [TestCase("hearts", 13, true)]
+        [TestCase("spades", 7, false)]
+        public void CheckCardBeatsCard(string color, int points, bool expected)
         {
             Card basic = new Card("hearts", 8);
-            Card trumper = new Card(color,points);
+            Card testCard = new Card(color,points);
 
-            Assert.AreEqual(expected, basic.Fight(trumper));
-        }
-        [Test]
-        [TestCase("hearts",9)]
-        public void BasicHigherCardWinsLowerCard(string color, int points)
-        {
-            Card currentCard = new Card("spades", 10);
-            Card basic1 = new Card(color, points);
-            
-            Assert.AreEqual(currentCard, currentCard.Fight(basic1));
-            Assert.AreEqual(currentCard, basic1.Fight(currentCard));
+            Assert.AreEqual(true, testCard != basic);
+            Assert.AreEqual(expected, testCard > basic);
+            Assert.AreEqual(!expected, testCard < basic);
         }
 
-        [Test]
-        [TestCase("hearts",11)]
-        public void BasicLowerCardLosesHigherCard(string color, int points)
+        [TestCase("hearts", 8, false)]
+        [TestCase("spades", 8, false)]
+        public void CardsOfSameStrengthDontWin(string color, int points, bool expected)
         {
-            Card currentCard = new Card("spades", 10);
-            Card basic1 = new Card(color, points);            
+            Card basic = new Card("hearts", 8);
+            Card testCard = new Card(color, points);
 
-            Assert.AreEqual(basic1, basic1.Fight(currentCard));
-            Assert.AreEqual(basic1, currentCard.Fight(basic1));
-        }*/
+            Assert.AreEqual(expected, testCard > basic);
+            Assert.AreEqual(expected, testCard < basic);
+            Assert.AreEqual(true, testCard == basic);
+            Assert.AreEqual(false, testCard != basic);
+        }
+        
+        [TestCase("hearts",14,5)]
+        [TestCase("trumpers",0,5)]
+        [TestCase("spades", 2,1)]
+        public void countScoreIsCorrect(string color, int points,int expectedScore)
+        {
+            Card basic = new Card("hearts",8);
+            Card testCard = new Card(color, points);
+            Assert.AreEqual(expectedScore, basic.CountScore(testCard));
+        }
+
+        [TestCase("hearts",14)]
+        [TestCase("trumpers",1)]
+        public void CountScoreThrowsWith2HighPointsCards(string color, int points)
+        {
+            Card testCard = new Card(color, points);
+            Card vsCard = new Card("spades", 13);
+            Assert.Throws<ArgumentException>(() => testCard.CountScore(vsCard));
+        }
     }
 }
