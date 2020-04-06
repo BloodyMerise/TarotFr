@@ -4,10 +4,9 @@ using System.Text;
 
 namespace TarotFr.Domain
 {
-    internal interface ITarotDeskService
+    internal interface ITarotDeckService
     {
         TarotDeck ShuffleDeck();
-        List<Card> SelectCards();
         Card Pick();       
     }
 }

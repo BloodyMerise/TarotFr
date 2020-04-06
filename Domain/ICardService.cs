@@ -7,6 +7,6 @@ namespace TarotFr.Domain
     internal interface ICardService
     {
         string ShowCard(Card card);
-        Card FightCard(Card a, Card b);
+        Card FightCard(Card a, Card b);       
     }
 }

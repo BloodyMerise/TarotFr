@@ -7,9 +7,19 @@ namespace TarotFr.Domain
 {
     public class TarotDeck
     {
-        private List<Card> _tarotDeck = new List<Card>();
+        public Stack<Card> _tarotDeck { get; }
+        private List<Card> _dog { get; }
+        private List<Player> _players = new List<Player>();
 
-        public TarotDeck()
+        public TarotDeck(bool fill,bool shuffle)
+        {
+            _tarotDeck = new Stack<Card>();
+            _dog = new List<Card>();
+            if (fill) FillDeck();
+            if (shuffle) Shuffle();
+        }
+
+        private void FillDeck()
         {
             List<string> colors = new List<string> { "hearts", "spades", "diamonds", "clubs" };
 
@@ -17,81 +27,52 @@ namespace TarotFr.Domain
             {
                 foreach (string color in colors)
                 {
-                    _tarotDeck.Add(new Card(color, i));
+                    _tarotDeck.Push(new Card(color, i));
                 }
             }
             for (int i = 0; i < 22; i++)
             {
-                _tarotDeck.Add(new Card("trumpers", i));
+                _tarotDeck.Push(new Card("trumpers", i));
             }
         }
 
-        public IEnumerable<Card> SelectCards(string color = null, int? points = null)
+        public IEnumerable<Card> Take(int nbCards)
         {
-            if (!points.HasValue && !String.IsNullOrEmpty(color))
-            {
-                return _tarotDeck.Where(card => card.Color() == color);
-            }
-            else if (points.HasValue && !String.IsNullOrEmpty(color))
-            {
-                return _tarotDeck.Where(card => card.Color() == color && card.Points() == points);
-            }
-            else if (points.HasValue && String.IsNullOrEmpty(color))
-            {
-                return _tarotDeck.Where(card => card.Points() == points);
-            }
-            else
-            {
-                return _tarotDeck;
-            }
+            if (nbCards > _tarotDeck.Count) throw new ArgumentOutOfRangeException("nbCards", nbCards, $"cannot take {nbCards} from deck {_tarotDeck.Count}");
+            if (nbCards < 0) throw new ArgumentOutOfRangeException("nbCards", nbCards, $"cannot take {nbCards} from deck {_tarotDeck.Count}");
+
+            return _tarotDeck.Take(nbCards);
         }
 
-        public IEnumerable<Card> SelectCards(List<Card> cards)
-        {            
-            return cards.Intersect(_tarotDeck);
+        public IEnumerable<Card> TakeAll()
+        {         
+            return _tarotDeck.Take(_tarotDeck.Count);
         }
 
-        public IEnumerable<Card> SelectCards(int nbCards)
+        public Card Pop()
         {
-            if (_tarotDeck.Count >= nbCards) return _tarotDeck.Take<Card>(nbCards);
-            else return null;
+            return _tarotDeck.Pop();
         }
 
-        public Card Pick(int index = -1)
-        {
-            return _tarotDeck.ElementAt(index);
-        }
 
-        public List<Card> Shuffle()
+        // from https://stackoverflow.com/questions/33643104/shuffling-a-stackt
+        public Stack<Card> Shuffle()
         {
-             _tarotDeck.Shuffle();
+            var temp = _tarotDeck.ToArray();
+            Random rnd = new Random();
+
+            _tarotDeck.Clear();
+            foreach (Card value in temp.OrderBy(x => rnd.Next()))
+            {
+                _tarotDeck.Push(value);
+            }
+
             return _tarotDeck;
         }
-    }
 
-    //The below is from https://stackoverflow.com/questions/273313/randomize-a-listt
-    public static class ThreadSafeRandom
-    {
-        [ThreadStatic] private static Random Local;
-
-        public static Random ThisThreadsRandom
+        public int NbCardsInDeck()
         {
-            get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
-        }
-    }
-    static class MyExtensions
-    {
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = ThreadSafeRandom.ThisThreadsRandom.Next(n + 1);
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
+            return _tarotDeck.Count;
         }
     }
 }

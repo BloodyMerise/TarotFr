@@ -44,6 +44,18 @@ namespace TarotFrTests
             }
         }
 
+        static IEnumerable<(List<Card>,int score)> TestCardLists()
+        {
+            TarotDeck dek = new TarotDeck(true,true);
+
+            //yield return new (new List<Card>() { new Card("hearts", 8) }, 0);
+            //yield return new (new List<Card>() { new Card("trumpers", 1) }), 0);
+            //yield return new (new List<Card>() { new Card("hearts", 8), new Card("hearts", 14)}, 5);
+            //yield return new (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 14)}, 1);
+            yield return (dek.Take(78).Where(x => x.Score() == 0).ToList(), 29); //Excuse
+            yield return (dek.Take(78).Where(x => x.Score() != 0).ToList(), 0);
+        }
+
         [TestCaseSource(nameof(TestCards), new object[] { false, false })]
         [TestCaseSource(nameof(TestCards), new object[] { false, true })]
         public void CanCreateAllCards(Card card)
@@ -87,14 +99,14 @@ namespace TarotFrTests
             Assert.AreEqual(isTrumper, testCard.IsTrumper());
         }
 
-        [TestCaseSource(nameof(TestCards),new object [] {false, true})]
+        [TestCaseSource(nameof(TestCards), new object[] { false, true })]
         public void OudlerScoreIs5(Card testCard)
         {
             Assert.AreEqual(5, testCard.Score());
         }
 
         [Test]
-        [TestCaseSource(nameof(TestCards), new object[] { true, false})]
+        [TestCaseSource(nameof(TestCards), new object[] { true, false })]
         public void BasicScore(Card testCard)
         {
             int score = testCard.Points() - 10;
@@ -103,54 +115,29 @@ namespace TarotFrTests
         }
 
         [TestCase("trumpers", 11)]
-        public void TrumperScore0(string color,int point)
+        public void TrumperScore0(string color, int point)
         {
             Card testCard = new Card(color, point);
             Assert.AreEqual(0, testCard.Score());
         }
 
-        [TestCase("hearts", null, 14, 14)]
-        [TestCase("", null, 78, 71)]
-        [TestCase("trumpers", null, 22, 15)]
-        [TestCase("", 1, 5, 5)]
-        public void TarotDeckIsCorrect(string color, int? points,int expectedNbCard,int totalScore)
+        [Test]
+        public void TarotDeckIsCorrect()
         {
-            TarotDeck myTarotDeck = new TarotDeck();
-            Assert.AreEqual(expectedNbCard, myTarotDeck.SelectCards(color,points).Count());
-            Assert.AreEqual(78, myTarotDeck.SelectCards().Count());
-            //Note that the below scoring is incorrect, this is just arithmetic sum of scores for each card
-            Assert.AreEqual(totalScore, myTarotDeck.SelectCards(color, points).Select(x => x.Score()).Sum());
-        }
+            TarotDeck myTarotDeck = new TarotDeck(true,false);
 
-        [TestCase(82)]
-        [TestCase(-1)]
-        public void TarotDeckPickFailsWithWrongInput(int index)
-        {
-            TarotDeck dek = new TarotDeck();
-            Assert.Throws<ArgumentOutOfRangeException>(() => dek.Pick(index));
+            Assert.AreEqual(14, myTarotDeck.TakeAll().Where(x => x.Color() == "hearts").Count());
+            Assert.AreEqual(22, myTarotDeck.TakeAll().Where(x => x.Color() == "trumpers").Count());
+            Assert.AreEqual(5, myTarotDeck.TakeAll().Where(x => x.Points() == 1).Count());
+            Assert.AreEqual(78, myTarotDeck.TakeAll().Count());            
         }
 
         [Test]
         public void TarotDeckIsShuffledInPlace()
         {
-            TarotDeck myDeck = new TarotDeck();
-            TarotDeck shuffleDeck = new TarotDeck();
-            shuffleDeck.Shuffle();
-            Assert.AreNotEqual(myDeck.Pick(2).ToString(), shuffleDeck.Pick(2).ToString());
-        }
-
-        [Test]
-        public void CanSelectListOfCardsFromDeck()
-        {
-            TarotDeck dek = new TarotDeck();
-            List<Card> chosenCards = new List<Card>();
-
-            for(int i=0; i<4 ;i++)
-            {
-                dek.Shuffle();
-                chosenCards.Add(dek.Pick(i));
-            }
-            Assert.AreEqual(chosenCards, dek.SelectCards(chosenCards));
+            TarotDeck myDeck = new TarotDeck(true,false);
+            TarotDeck shuffleDeck = new TarotDeck(true,true);            
+            Assert.AreNotEqual(myDeck.Pop().ToString(), shuffleDeck.Pop().ToString());
         }
         
         [Test]
@@ -163,7 +150,7 @@ namespace TarotFrTests
         public void CheckCardBeatsCard(string color, int points, bool expected)
         {
             Card basic = new Card("hearts", 8);
-            Card testCard = new Card(color,points);
+            Card testCard = new Card(color, points);
 
             Assert.AreEqual(true, testCard != basic);
             Assert.AreEqual(expected, testCard > basic);
@@ -182,24 +169,32 @@ namespace TarotFrTests
             Assert.AreEqual(true, testCard == basic);
             Assert.AreEqual(false, testCard != basic);
         }
-        
-        [TestCase("hearts",14,5)]
-        [TestCase("trumpers",0,5)]
-        [TestCase("spades", 2,1)]
-        public void CountScoreIsCorrect(string color, int points,int expectedScore)
+
+        [TestCase("hearts", 14, 5)]
+        [TestCase("trumpers", 0, 5)]
+        [TestCase("spades", 2, 1)]
+        public void CountScoreIsCorrect(string color, int points, int expectedScore)
         {
-            Card basic = new Card("hearts",8);
+            Card basic = new Card("hearts", 8);
             Card testCard = new Card(color, points);
             Assert.AreEqual(expectedScore, basic.CountScore(testCard));
         }
 
-        [TestCase("hearts",14)]
-        [TestCase("trumpers",1)]
+        [TestCase("hearts", 14)]
+        [TestCase("trumpers", 1)]
         public void CountScoreThrowsWith2HighPointsCards(string color, int points)
         {
             Card testCard = new Card(color, points);
             Card vsCard = new Card("spades", 13);
             Assert.Throws<ArgumentException>(() => testCard.CountScore(vsCard));
+        }
+
+        [TestCaseSource(nameof(TestCardLists))]    
+        public void CountScoreOnFullDeck((List<Card>,int) coupleTest)
+        {
+            List<Card> cardsToCount = coupleTest.Item1;
+            int expectedScore = coupleTest.Item2;
+            Assert.AreEqual(expectedScore, cardsToCount.Score());
         }
     }
 }
