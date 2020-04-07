@@ -23,12 +23,12 @@ namespace TarotFr.Domain
         public string getColor() => _color.ToString();
         public int Points() => _faceValue.GetPoints();
         public bool IsTrumper() => _color == CardColors.trumpers;
-        public int Score() => _cardScore.GetScore();
+        public decimal Score() => _cardScore.GetScore();
         public int CountScore(Card card) => _cardScore.CountScore(card);
 
         public Card(string color, int points)
         {
-            _color = (CardColors)Enum.Parse(typeof(CardColors), color,true);
+            _color = (CardColors)Enum.Parse(typeof(CardColors), color, true);
             _faceValue = new FaceValue(points);
             _isOudler = checkOudler();
             _cardScore = new CardScore(IsTrumper(), _isOudler, _faceValue);

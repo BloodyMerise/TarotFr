@@ -44,7 +44,7 @@ namespace TarotFrTests
             }
         }
 
-        static IEnumerable<(List<Card>,int score)> TestCardLists()
+        static IEnumerable<(List<Card>,decimal score)> TestCardLists()
         {
             TarotDeck dek = new TarotDeck(true,true);
 
@@ -52,6 +52,11 @@ namespace TarotFrTests
             yield return (new List<Card>() { new Card("trumpers", 1) }, 0);
             yield return (new List<Card>() { new Card("trumpers", 1) , new Card("hearts", 14) }, 0);
             yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 3) , new Card("hearts", 14) }, 5);
+            yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 21) , new Card("hearts", 14) }, 9);
+            yield return (new List<Card>() { new Card("hearts", 8), new Card("clubs", 8), new Card("trumpers", 21), new Card("hearts", 14) }, 10);
+            yield return (new List<Card>() { new Card("hearts", 8), new Card("clubs", 8), new Card("trumpers", 21), new Card("hearts", 14), new Card("clubs", 14) }, 14);
+            yield return (new List<Card>() { new Card("hearts", 8), new Card("clubs", 8), new Card("trumpers", 21), new Card("hearts", 14), new Card("diamonds", 14), new Card("clubs", 14) }, 19);
+            yield return (new List<Card>() { new Card("hearts", 8), new Card("clubs", 8), new Card("trumpers", 21), new Card("hearts", 14), new Card("diamonds", 14), new Card("clubs", 14), new Card("spades", 14) }, 23); 
             yield return (new List<Card>() { new Card("hearts", 8), new Card("hearts", 14)}, 5);
             yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 14)}, 1);
             yield return (dek.Take(78).Where(x => x.Score() == 0).ToList(), 29); //40 basic + 19 trumpers = 59/2 points
@@ -108,25 +113,25 @@ namespace TarotFrTests
         }
 
         [TestCaseSource(nameof(TestCards), new object[] { false, true })]
-        public void OudlerScoreIs5(Card testCard)
+        public void OudlerScoreIs45(Card testCard)
         {
-            Assert.AreEqual(5, testCard.Score());
+            Assert.AreEqual(4.5M, testCard.Score());
         }
 
         [Test]
         [TestCaseSource(nameof(TestCards), new object[] { true, false })]
         public void BasicScore(Card testCard)
         {
-            int score = testCard.Points() - 10;
-            score = (score > 0) ? testCard.Points() - 9 : 0;
+            decimal score = testCard.Points() - 10;
+            score = (score > 0M) ? testCard.Points() - 9.5M : 0.5M;
             Assert.AreEqual(score, testCard.Score());
         }
 
         [TestCase("trumpers", 11)]
-        public void TrumperScore0(string color, int point)
+        public void TrumperScore05(string color, int point)
         {
             Card testCard = new Card(color, point);
-            Assert.AreEqual(0, testCard.Score());
+            Assert.AreEqual(0.5M, testCard.Score());
         }
 
         [Test]
@@ -201,10 +206,10 @@ namespace TarotFrTests
         }
 
         [TestCaseSource(nameof(TestCardLists))]    
-        public void CountScoreOnFullDeck((List<Card>,int) coupleTest)
+        public void CountScoreOnFullDeck((List<Card>,decimal) coupleTest)
         {
             List<Card> cardsToCount = coupleTest.Item1;
-            int expectedScore = coupleTest.Item2;
+            decimal expectedScore = coupleTest.Item2;
 
             Assert.AreEqual(expectedScore, cardsToCount.Score());
         }

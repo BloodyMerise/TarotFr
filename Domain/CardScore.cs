@@ -6,27 +6,26 @@ namespace TarotFr.Domain
 {
     internal class CardScore
     {
-        private int _score;
-        internal int GetScore() => _score;
+        private decimal _score;
+        internal decimal GetScore() => _score;
 
         public CardScore(bool trumper, bool oudler, FaceValue fv)
         {
-            if (oudler) { _score = 5; }
-            else if (trumper) { _score = 0; }
-            else if (fv.GetPoints() >= 11) { _score = fv.GetPoints() - 9; }
-            else _score = 0;
+            if (oudler) { _score = 4.5M; }
+            else if (trumper) { _score = 0.5M; }
+            else if (fv.GetPoints() >= 11) { _score = fv.GetPoints() - 9.5M; }
+            else _score = 0.5M;
         }
 
         internal int CountScore(Card card)
         {
             CheckOneCardHas0Score(card);
-            if (_score == 0 && card.Score() == 0) return 1;
-            return (_score > card.Score()) ? _score : card.Score();
+            return (int)(_score + card.Score());
         }
 
         private void CheckOneCardHas0Score(Card card)
         {
-            if (card.Score() != 0 && _score != 0)
+            if (card.Score() != 0.5M && _score != 0.5M)
             {
                 throw new ArgumentException("Cards must be counted in pairs, one with score of 0", "card");
             }
