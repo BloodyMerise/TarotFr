@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TarotFr.Domain
 {
-    public static class MyExtensions
+    public static class ListCardExtensions
     {
         public static int Score(this List<Card> cardsToCount)
         {
@@ -22,8 +22,8 @@ namespace TarotFr.Domain
                 if (!basicCards.Contains(basic))
                 {
                     score -= 1;
-                    basic = countedCards.Last(x => x.Score() == 0);
-                    basicCards.Add(countedCards.Last(x => x.Score() == 0));
+                    basic = countedCards.First(x => x.Score() == 0);
+                    basicCards.Add(countedCards.First(x => x.Score() == 0));
                 }
                 else basicCards.Remove(basic);
 

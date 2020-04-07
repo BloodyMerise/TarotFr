@@ -48,30 +48,38 @@ namespace TarotFrTests
         {
             TarotDeck dek = new TarotDeck(true,true);
 
-            //yield return new (new List<Card>() { new Card("hearts", 8) }, 0);
-            //yield return new (new List<Card>() { new Card("trumpers", 1) }), 0);
-            //yield return new (new List<Card>() { new Card("hearts", 8), new Card("hearts", 14)}, 5);
-            //yield return new (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 14)}, 1);
-            yield return (dek.Take(78).Where(x => x.Score() == 0).ToList(), 29); //Excuse
-            yield return (dek.Take(78).Where(x => x.Score() != 0).ToList(), 0);
+            yield return (new List<Card>() { new Card("hearts", 8) }, 0);
+            yield return (new List<Card>() { new Card("trumpers", 1) }, 0);
+            yield return (new List<Card>() { new Card("trumpers", 1) , new Card("hearts", 14) }, 0);
+            yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 3) , new Card("hearts", 14) }, 5);
+            yield return (new List<Card>() { new Card("hearts", 8), new Card("hearts", 14)}, 5);
+            yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 14)}, 1);
+            yield return (dek.Take(78).Where(x => x.Score() == 0).ToList(), 29); //40 basic + 19 trumpers = 59/2 points
+            yield return (dek.Take(78).Where(x => x.Points() == 10).ToList(), 2); //4 basic + 9 trumpers = 5/2 points
+            yield return (dek.Take(78).Where(x => x.Score() != 0).ToList(), 0); //cannot count only figures
         }
 
         [TestCaseSource(nameof(TestCards), new object[] { false, false })]
         [TestCaseSource(nameof(TestCards), new object[] { false, true })]
         public void CanCreateAllCards(Card card)
         {
-            Assert.DoesNotThrow(() => new Card(card.Color(), card.Points()));
+            Assert.DoesNotThrow(() => new Card(card.getColor(), card.Points()));
         }
 
         [Test]
         [TestCase("hearts", 15)]
         [TestCase("clubs", 0)]
         [TestCase("trumpers", 22)]
-        [TestCase("clubs", -1)]
-        [TestCase("rewe", -1)]
+        [TestCase("clubs", -1)]        
         public void CreateOnlyValidCards(string color, int point)
+        {            
+            Assert.Throws<ArgumentOutOfRangeException> (() => new Card(color, point));
+        }
+
+        [TestCase("rewe", -1)]
+        public void CardThrowsOnWrongInput(string color, int point)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Card(color, point));
+            Assert.Throws<ArgumentException>(() => new Card(color, point)); //enum only sends ArgumentException
         }
 
         [Test]
@@ -126,8 +134,8 @@ namespace TarotFrTests
         {
             TarotDeck myTarotDeck = new TarotDeck(true,false);
 
-            Assert.AreEqual(14, myTarotDeck.TakeAll().Where(x => x.Color() == "hearts").Count());
-            Assert.AreEqual(22, myTarotDeck.TakeAll().Where(x => x.Color() == "trumpers").Count());
+            Assert.AreEqual(14, myTarotDeck.TakeAll().Where(x => x.getColor() == "hearts").Count());
+            Assert.AreEqual(22, myTarotDeck.TakeAll().Where(x => x.getColor() == "trumpers").Count());
             Assert.AreEqual(5, myTarotDeck.TakeAll().Where(x => x.Points() == 1).Count());
             Assert.AreEqual(78, myTarotDeck.TakeAll().Count());            
         }
@@ -136,7 +144,8 @@ namespace TarotFrTests
         public void TarotDeckIsShuffledInPlace()
         {
             TarotDeck myDeck = new TarotDeck(true,false);
-            TarotDeck shuffleDeck = new TarotDeck(true,true);            
+            TarotDeck shuffleDeck = new TarotDeck(true,true);    
+            
             Assert.AreNotEqual(myDeck.Pop().ToString(), shuffleDeck.Pop().ToString());
         }
         
@@ -177,6 +186,7 @@ namespace TarotFrTests
         {
             Card basic = new Card("hearts", 8);
             Card testCard = new Card(color, points);
+
             Assert.AreEqual(expectedScore, basic.CountScore(testCard));
         }
 
@@ -186,6 +196,7 @@ namespace TarotFrTests
         {
             Card testCard = new Card(color, points);
             Card vsCard = new Card("spades", 13);
+
             Assert.Throws<ArgumentException>(() => testCard.CountScore(vsCard));
         }
 
@@ -194,6 +205,7 @@ namespace TarotFrTests
         {
             List<Card> cardsToCount = coupleTest.Item1;
             int expectedScore = coupleTest.Item2;
+
             Assert.AreEqual(expectedScore, cardsToCount.Score());
         }
     }

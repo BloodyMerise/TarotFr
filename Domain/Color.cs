@@ -4,8 +4,9 @@ using System.Linq;
 
 namespace TarotFr.Domain
 {
-    internal class Color
+    /*internal class Color
     {
+        
         private string _name;
         private bool _isTrumper;
         internal static List<string> validColors = new List<string> { "hearts","spades","diamonds","clubs","trumpers" };
@@ -19,5 +20,5 @@ namespace TarotFr.Domain
             _name = CheckValidColor(color.ToLower()) ? color.ToLower() : null;
             _isTrumper = _name == "trumpers";
         }
-    }
+    }*/
 }

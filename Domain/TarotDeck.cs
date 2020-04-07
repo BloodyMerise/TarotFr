@@ -54,6 +54,15 @@ namespace TarotFr.Domain
             return _tarotDeck.Pop();
         }
 
+        public IEnumerable<Card> Pop(int nbcards)
+        {
+            if (nbcards < 0) yield return null;
+            for(int i = 0; i < nbcards; i++)
+            {
+                yield return _tarotDeck.Pop();
+            }
+        }
+
 
         // from https://stackoverflow.com/questions/33643104/shuffling-a-stackt
         public Stack<Card> Shuffle()
