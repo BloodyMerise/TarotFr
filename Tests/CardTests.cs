@@ -44,13 +44,13 @@ namespace TarotFrTests
             }
         }
 
-        static IEnumerable<(List<Card>,decimal score)> TestCardLists()
+        static IEnumerable<(List<Card>,decimal)> TestCardLists()
         {
-            TarotDeck dek = new TarotDeck(true,true);
+            TarotDeck dek = new TarotDeck(true);
 
             yield return (new List<Card>() { new Card("hearts", 8) }, 0);
-            yield return (new List<Card>() { new Card("trumpers", 1) }, 0);
-            yield return (new List<Card>() { new Card("trumpers", 1) , new Card("hearts", 14) }, 0);
+            yield return (new List<Card>() { new Card("trumpers", 1) }, 4);
+            yield return (new List<Card>() { new Card("trumpers", 1) , new Card("hearts", 14) }, 9); // -> traditionnally not possible
             yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 3) , new Card("hearts", 14) }, 5);
             yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 21) , new Card("hearts", 14) }, 9);
             yield return (new List<Card>() { new Card("hearts", 8), new Card("clubs", 8), new Card("trumpers", 21), new Card("hearts", 14) }, 10);
@@ -59,9 +59,10 @@ namespace TarotFrTests
             yield return (new List<Card>() { new Card("hearts", 8), new Card("clubs", 8), new Card("trumpers", 21), new Card("hearts", 14), new Card("diamonds", 14), new Card("clubs", 14), new Card("spades", 14) }, 23); 
             yield return (new List<Card>() { new Card("hearts", 8), new Card("hearts", 14)}, 5);
             yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 14)}, 1);
-            yield return (dek.Take(78).Where(x => x.Score() == 0).ToList(), 29); //40 basic + 19 trumpers = 59/2 points
-            yield return (dek.Take(78).Where(x => x.Points() == 10).ToList(), 2); //4 basic + 9 trumpers = 5/2 points
-            yield return (dek.Take(78).Where(x => x.Score() != 0).ToList(), 0); //cannot count only figures
+            yield return (dek.Take(78).Where(x => x.Score() == 0.5M).ToList(), 29); //40 basic + 19 trumpers = 59/2 points
+            yield return (dek.Take(78).Where(x => x.Points() == 10).ToList(), 2);
+            yield return (dek.Take(78).Where(x => x.Score() != 0).ToList(), 91); //Chelem ?
+            yield return (dek.Take(78).ToList(), 91); //Chelem ?
         }
 
         [TestCaseSource(nameof(TestCards), new object[] { false, false })]
@@ -137,7 +138,7 @@ namespace TarotFrTests
         [Test]
         public void TarotDeckIsCorrect()
         {
-            TarotDeck myTarotDeck = new TarotDeck(true,false);
+            TarotDeck myTarotDeck = new TarotDeck(false);
 
             Assert.AreEqual(14, myTarotDeck.TakeAll().Where(x => x.getColor() == "hearts").Count());
             Assert.AreEqual(22, myTarotDeck.TakeAll().Where(x => x.getColor() == "trumpers").Count());
@@ -148,8 +149,8 @@ namespace TarotFrTests
         [Test]
         public void TarotDeckIsShuffledInPlace()
         {
-            TarotDeck myDeck = new TarotDeck(true,false);
-            TarotDeck shuffleDeck = new TarotDeck(true,true);    
+            TarotDeck myDeck = new TarotDeck(false);
+            TarotDeck shuffleDeck = new TarotDeck(true);    
             
             Assert.AreNotEqual(myDeck.Pop().ToString(), shuffleDeck.Pop().ToString());
         }

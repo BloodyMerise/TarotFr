@@ -11,12 +11,15 @@ namespace TarotFr.Domain
         private List<Card> _dog { get; }
         private List<Player> _players = new List<Player>();
 
-        public TarotDeck(bool fill,bool shuffle)
+        public TarotDeck(bool shuffle)
         {
             _tarotDeck = new Stack<Card>();
             _dog = new List<Card>();
-            if (fill) FillDeck();
+
+            FillDeck();
+            
             if (shuffle) Shuffle();
+            if(!checkScore(91)) throw new Exception("Wrong total score for deck at creation");
         }
 
         private void FillDeck()
@@ -36,6 +39,8 @@ namespace TarotFr.Domain
             }
         }
 
+        public bool IsEmpty() { return _tarotDeck.Count == 0; }
+
         public IEnumerable<Card> Take(int nbCards)
         {
             if (nbCards > _tarotDeck.Count) throw new ArgumentOutOfRangeException("nbCards", nbCards, $"cannot take {nbCards} from deck {_tarotDeck.Count}");
@@ -51,7 +56,7 @@ namespace TarotFr.Domain
 
         public Card Pop()
         {
-            return _tarotDeck.Pop();
+               return _tarotDeck.Pop();
         }
 
         public IEnumerable<Card> Pop(int nbcards)
@@ -59,8 +64,14 @@ namespace TarotFr.Domain
             if (nbcards < 0) yield return null;
             for(int i = 0; i < nbcards; i++)
             {
+                if (_tarotDeck.Count == 0) break;
                 yield return _tarotDeck.Pop();
             }
+        }
+
+        public bool checkScore(int expectedScore)
+        {
+            return _tarotDeck.Score() == expectedScore;
         }
 
 
@@ -77,11 +88,14 @@ namespace TarotFr.Domain
             }
 
             return _tarotDeck;
-        }
+        }        
 
         public int NbCardsInDeck()
         {
             return _tarotDeck.Count;
         }
+
+        
+
     }
 }
