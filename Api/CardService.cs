@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TarotFr.Domain;
+﻿using TarotFr.Domain;
 
 namespace TarotFr.Api
 {
     class CardService : ICardService
     {
          public string ShowCard(Card card)
-        {
+        {            
             return card.ToString();
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace TarotFr.Domain
 {
@@ -8,19 +7,27 @@ namespace TarotFr.Domain
     {
         private string _name;
         private List<Card> _hand = new List<Card>();
-        private bool _isDealer = false;
         private List<Card> _dog = new List<Card>();
+        private LinkedList<List<Card>> _wonHands = new LinkedList<List<Card>>();
+        private Contract _contract = new Contract(null);
+        private bool _isDealer = false;
+        private bool _isAttacker = false;
+        private bool _isDefenser = false;
 
         public Player(string name)
         {
-            _name = name;            
+            if (String.IsNullOrEmpty(name)) name = "Josette";
+            else _name = name;            
         }
 
         public int ScoreInHand() { return _hand.Score(); }
         public int ScoreInDog() { return _dog.Score(); }
         public void MakeDealer() { _isDealer = true; }
+        public void MakeAttacker() { _isAttacker = true; }
+        public void MakeDefenser() { _isDefenser = true; }
         public int NbCardsInHand() => _hand.Count;
         public int NbCardsInDog() => _isDealer ? _dog.Count : 0;
+        public bool IsDealer() => _isDealer;
 
         private void ReceivesCard(Card card)
         {
@@ -32,37 +39,48 @@ namespace TarotFr.Domain
             _hand.AddRange(cards);
         }
 
-        public void DealsAllCardsFromDeck(TarotDeck dek, int step, LinkedList<Player> players, int limitDog)
+        public void DealsAllCardsFromDeck(TarotTable dek, LinkedList<Player> players)
         {
-            if (!_isDealer) return;            
-            while (!dek.IsEmpty())
+            if (!_isDealer) return;
+            int limitDog = CardDealingRules.DogMaxCards(players.Count);
+            int step = CardDealingRules.NbCardsToDeal();
+
+            Random rnd = new Random();
+
+            while (!dek.DeckIsEmpty())
             {
                 players.First.NextOrFirst().Value.ReceivesCard(dek.Pop(step));
-                if (_dog.Count < limitDog) DealerFromDeckToDog(dek, 1, limitDog);                                    
+                if (_dog.Count < limitDog) DealerFromDeckToDog(dek, rnd.Next(1, step+1), limitDog);                                    
             }
         }
 
-        public void DealerFromDeckToDog(TarotDeck dek, int nbcards, int limitDog)
+        public void DealerFromDeckToDog(TarotTable dek, int nbCards, int limitDog)
         {
-            if (_isDealer && nbcards < limitDog ) {
-                for (int i = 0; i < nbcards; i++)
+            if (_isDealer) {
+                for (int i = 0; i < nbCards && _dog.Count < limitDog; i++)
                 {
-                    if (dek.IsEmpty()) break; 
-                    _dog.Add(dek.Pop());
+                    if (dek.DeckIsEmpty()) break; 
+                    _dog.Add(dek.DeckPop());
                 }
             }
         }
 
-        public void GivesHandNbCardsFromDeck(TarotDeck dek, int nbcards, Player player)
-        {
+        public void GivesHandNbCardsFromDeck(TarotTable dek, int nbcards, Player player)
+        {            
             if (_isDealer)
             {
                 for (int i = 0; i < nbcards; i++)
                 {
-                    if (dek.IsEmpty()) break;
-                    player._hand.Add(dek.Pop());
+                    if (dek.DeckIsEmpty()) break;
+                    player._hand.Add(dek.DeckPop());
                 }
             }
+        }
+
+        public void BetsContract(string contractName)
+        {
+            if (String.IsNullOrEmpty(contractName)) _contract = new Contract("pass");
+            else _contract = new Contract(contractName);
         }
     }
 }

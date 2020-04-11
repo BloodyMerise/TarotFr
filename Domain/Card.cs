@@ -5,7 +5,7 @@ namespace TarotFr.Domain
 {
     public class Card
     {
-        public enum CardColors
+        internal enum CardColors
         {
             hearts,
             spades,

@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
 
 namespace TarotFr.Domain
 {
-    public class TarotDeck
+    public class TarotTable
     {
         public Stack<Card> _tarotDeck { get; }
         private List<Card> _dog { get; }
-        private List<Player> _players = new List<Player>();
-
-        public TarotDeck(bool shuffle)
+        private Round _round;
+        
+        public TarotTable(bool shuffle, bool startsFromLeft)
         {
             _tarotDeck = new Stack<Card>();
             _dog = new List<Card>();
+            _round = new Round(startsFromLeft);
 
             FillDeck();
             
@@ -22,6 +22,8 @@ namespace TarotFr.Domain
             if(!checkScore(91)) throw new Exception("Wrong total score for deck at creation");
         }
 
+        public int NbCardsInDeck() { return _tarotDeck.Count; }
+        
         private void FillDeck()
         {
             List<string> colors = new List<string> { "hearts", "spades", "diamonds", "clubs" };
@@ -39,8 +41,11 @@ namespace TarotFr.Domain
             }
         }
 
-        public bool IsEmpty() { return _tarotDeck.Count == 0; }
-
+        public bool DeckIsEmpty() { return _tarotDeck.Count == 0; }
+        public Card DeckPop() { return _tarotDeck.Pop(); }
+        public bool checkScore (int expectedScore) { return _tarotDeck.Score() == expectedScore; }
+        public IEnumerable<Card> TakeAll() { return _tarotDeck.Take(_tarotDeck.Count); }
+        
         public IEnumerable<Card> Take(int nbCards)
         {
             if (nbCards > _tarotDeck.Count) throw new ArgumentOutOfRangeException("nbCards", nbCards, $"cannot take {nbCards} from deck {_tarotDeck.Count}");
@@ -48,32 +53,17 @@ namespace TarotFr.Domain
 
             return _tarotDeck.Take(nbCards);
         }
-
-        public IEnumerable<Card> TakeAll()
-        {         
-            return _tarotDeck.Take(_tarotDeck.Count);
-        }
-
-        public Card Pop()
-        {
-               return _tarotDeck.Pop();
-        }
-
-        public IEnumerable<Card> Pop(int nbcards)
-        {
-            if (nbcards < 0) yield return null;
-            for(int i = 0; i < nbcards; i++)
+        
+        //if asked to pop 3 but only 2 in deck, still yields the last 2
+        public IEnumerable<Card> Pop(int nbCards)
+        {            
+            if (nbCards < 0) yield return null;
+            for(int i = 0; i < nbCards; i++)
             {
                 if (_tarotDeck.Count == 0) break;
                 yield return _tarotDeck.Pop();
             }
         }
-
-        public bool checkScore(int expectedScore)
-        {
-            return _tarotDeck.Score() == expectedScore;
-        }
-
 
         // from https://stackoverflow.com/questions/33643104/shuffling-a-stackt
         public Stack<Card> Shuffle()
@@ -88,14 +78,12 @@ namespace TarotFr.Domain
             }
 
             return _tarotDeck;
-        }        
-
-        public int NbCardsInDeck()
-        {
-            return _tarotDeck.Count;
-        }
-
+        }   
         
+        public Player AuctionWinner()
+        {
 
+            return dealer;
+        }
     }
 }
