@@ -5,7 +5,7 @@ namespace TarotFr.Domain
 {
     public class Player
     {
-        private string _name;
+        public string Name { get; }
         private List<Card> _hand = new List<Card>();
         private List<Card> _dog = new List<Card>();
         private LinkedList<List<Card>> _wonHands = new LinkedList<List<Card>>();
@@ -17,7 +17,7 @@ namespace TarotFr.Domain
         public Player(string name)
         {
             if (String.IsNullOrEmpty(name)) name = "Josette";
-            else _name = name;            
+            else this.Name = name;            
         }
 
         public int ScoreInHand() { return _hand.Score(); }

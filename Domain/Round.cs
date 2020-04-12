@@ -10,26 +10,25 @@ namespace TarotFr.Domain
         private bool _roundStartsFromTheLeft = true;
         private int _roundNumber = 0;
 
-        public Round(bool startsFromLeft)
+        public Round(bool startsFromLeft, LinkedList<Player> players)
         {
             _roundStartsFromTheLeft = startsFromLeft;
+            _players = players;
         }
 
-        private LinkedListNode<Player> FindDealerNode()
+        public Player FindDealer()
         {
-            while (!_players.First.Next.Value.IsDealer()) {}
-            return _players.First.Next;
-        }
+            foreach(Player player in _players)
+            {
+                if (player.IsDealer()) return player;
+            }
 
-        public void SetRoundToStartAfterDealer()
-        {
-            LinkedListNode<Player> dealerNode = FindDealerNode();            
+            return null;
         }
-
-        private Player NextPlayer()
+        
+        public Player NextPlayer(Player player)
         {
-            if (_roundStartsFromTheLeft) return _players.First.Next.Value;
-            else return _players.First.Previous.Value;
+            return _roundStartsFromTheLeft ? _players.Find(player).NextOrFirst().Value : _players.Find(player).PreviousOrLast().Value;
         }
     }
 }

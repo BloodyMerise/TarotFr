@@ -10,11 +10,11 @@ namespace TarotFr.Domain
         private List<Card> _dog { get; }
         private Round _round;
         
-        public TarotTable(bool shuffle, bool startsFromLeft)
+        public TarotTable(bool shuffle, bool startsFromLeft,LinkedList<Player> players)
         {
             _tarotDeck = new Stack<Card>();
             _dog = new List<Card>();
-            _round = new Round(startsFromLeft);
+            _round = new Round(startsFromLeft, players);            
 
             FillDeck();
             
@@ -78,12 +78,27 @@ namespace TarotFr.Domain
             }
 
             return _tarotDeck;
-        }   
+        }
+
+        public void AddPlayers(LinkedList<Player> players)
+        {
+            _round = new Domain.Round(true, players);
+        }
+        
+        public Player NextPlayer(Player player)
+        {
+            // if player not in round, crash ? null ?
+            return _round.NextPlayer(player);
+        }
         
         public Player AuctionWinner()
         {
+            return new Player(null);
+        }
 
-            return dealer;
+        public Player GetRoundDealer()
+        {
+            return _round.FindDealer();
         }
     }
 }
