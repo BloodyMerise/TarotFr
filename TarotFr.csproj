@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Domain\Card.cs~RF2a6e7c.TMP" />
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\" />
+    <None Remove="Domain\Card.cs~RF2a6e7c.TMP" />
   </ItemGroup>
 
   <ItemGroup>

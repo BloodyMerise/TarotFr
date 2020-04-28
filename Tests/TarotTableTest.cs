@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
-using TarotFr.Domain;
+using TarotFr.Api;
+using TarotFr.Infrastructure;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -22,7 +23,7 @@ namespace TarotFr.Tests
             yield return (new List<Card>() { new Card("hearts", 8), new Card("clubs", 8), new Card("trumpers", 21), new Card("hearts", 14), new Card("diamonds", 14), new Card("clubs", 14), new Card("spades", 14) }, 23);
             yield return (new List<Card>() { new Card("hearts", 8), new Card("hearts", 14) }, 5);
             yield return (new List<Card>() { new Card("hearts", 8), new Card("trumpers", 14) }, 1);
-            yield return (dek.Take(78).Where(x => x.Score() == 0.5M).ToList(), 29); //40 basic + 19 trumpers = 59/2 points
+            yield return (dek.Take(78).Where(x => x.Score() == 0.5).ToList(), 29); //40 basic + 19 trumpers = 59/2 points
             yield return (dek.Take(78).Where(x => x.Points() == 10).ToList(), 2);
             yield return (dek.Take(78).Where(x => x.Score() != 0).ToList(), 91); //Chelem ?
             yield return (dek.Take(78).ToList(), 91); //Chelem ?
@@ -88,7 +89,7 @@ namespace TarotFr.Tests
             Player dealerLeft = tableLeft.GetRoundDealer();
             Player dealerRight = tableRight.GetRoundDealer();
 
-            Assert.AreNotEqual(tableLeft.NextPlayer(dealerLeft).Name, tableRight.NextPlayer(dealerRight).Name);
+            Assert.AreNotEqual(tableLeft.NextPlayer(dealerLeft).name, tableRight.NextPlayer(dealerRight).name);
         }
     }
 }

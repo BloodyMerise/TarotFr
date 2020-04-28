@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TarotFr.Infrastructure;
 
-namespace TarotFr.Domain
+namespace TarotFr.Api
 {
-    internal class Round
+    class Round
     {
         private LinkedList<Player> _players = new LinkedList<Player>();
         private bool _roundStartsFromTheLeft = true;
-        private int _roundNumber = 0;
+        private int _roundNumber = 0;        
+        public int GetNbPlayers() => _players.Count;
 
         public Round(bool startsFromLeft, LinkedList<Player> players)
         {
@@ -25,7 +27,7 @@ namespace TarotFr.Domain
 
             return null;
         }
-        
+
         public Player NextPlayer(Player player)
         {
             return _roundStartsFromTheLeft ? _players.Find(player).NextOrFirst().Value : _players.Find(player).PreviousOrLast().Value;

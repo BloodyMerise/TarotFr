@@ -1,16 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TarotFr.Infrastructure;
 
-namespace TarotFr.Domain
+namespace TarotFr.Api
 {
     public class TarotTable
     {
         public Stack<Card> _tarotDeck { get; }
         private List<Card> _dog { get; }
         private Round _round;
+
+        public bool DeckIsEmpty() { return _tarotDeck.Count == 0; }
+        public bool CheckScore(int expectedScore) { return _tarotDeck.Score() == expectedScore; }
+        public Card DeckPop() { return _tarotDeck.Pop(); }
+        public IEnumerable<Card> TakeAll() { return _tarotDeck.Take(_tarotDeck.Count); }
+        public int NbCardsInDeck() { return _tarotDeck.Count; }
         
-        public TarotTable(bool shuffle, bool startsFromLeft,LinkedList<Player> players)
+        public TarotTable(bool shuffleCards, bool startsFromLeft,LinkedList<Player> players)
         {
             _tarotDeck = new Stack<Card>();
             _dog = new List<Card>();
@@ -18,11 +25,9 @@ namespace TarotFr.Domain
 
             FillDeck();
             
-            if (shuffle) Shuffle();
-            if(!checkScore(91)) throw new Exception("Wrong total score for deck at creation");
+            if (shuffleCards) Shuffle();
+            if(!CheckScore(91)) throw new Exception("Wrong total score for deck at creation");
         }
-
-        public int NbCardsInDeck() { return _tarotDeck.Count; }
         
         private void FillDeck()
         {
@@ -40,11 +45,6 @@ namespace TarotFr.Domain
                 _tarotDeck.Push(new Card("trumpers", i));
             }
         }
-
-        public bool DeckIsEmpty() { return _tarotDeck.Count == 0; }
-        public Card DeckPop() { return _tarotDeck.Pop(); }
-        public bool checkScore (int expectedScore) { return _tarotDeck.Score() == expectedScore; }
-        public IEnumerable<Card> TakeAll() { return _tarotDeck.Take(_tarotDeck.Count); }
         
         public IEnumerable<Card> Take(int nbCards)
         {
@@ -82,7 +82,7 @@ namespace TarotFr.Domain
 
         public void AddPlayers(LinkedList<Player> players)
         {
-            _round = new Domain.Round(true, players);
+            _round = new Round(true, players);
         }
         
         public Player NextPlayer(Player player)

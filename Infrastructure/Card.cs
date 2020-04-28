@@ -1,37 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using TarotFr.Domain;
 
-namespace TarotFr.Domain
+namespace TarotFr.Infrastructure
 {
     public class Card
     {
-        internal enum CardColors
-        {
-            hearts,
-            spades,
-            diamonds,
-            clubs,
-            trumpers            
-        };
-
-        private CardColors _color;
+        private Colors _color;
         private FaceValue _faceValue;
-        private CardScore _cardScore;
+        private double _cardScore;
         private bool _isOudler;
 
         public bool IsOudler() => _isOudler;
+        public bool IsTrumper() => _color.Equals(Colors.CardColors.trumpers);
         public string getColor() => _color.ToString();
-        public int Points() => _faceValue.GetPoints();
-        public bool IsTrumper() => _color == CardColors.trumpers;
-        public decimal Score() => _cardScore.GetScore();
-        public int CountScore(Card card) => _cardScore.CountScore(card);
-
+        public int Points() => _faceValue.GetPoints();        
+        public double Score() => _cardScore;
+        
         public Card(string color, int points)
         {
-            _color = (CardColors)Enum.Parse(typeof(CardColors), color, true);
+            _color = (Colors) Enum.Parse(typeof(Colors), color, true);
             _faceValue = new FaceValue(points);
             _isOudler = checkOudler();
-            _cardScore = new CardScore(IsTrumper(), _isOudler, _faceValue);
+            _cardScore = CardCountingRules.GetPoints(IsTrumper(), _isOudler, _faceValue.GetPoints());
             checkConsistency();
         }
 

@@ -1,17 +1,19 @@
 ﻿using System;
 
-namespace TarotFr.Domain
+namespace TarotFr.Infrastructure
 {
-    internal class Contract
+    class Contract
     {
-        private enum Contracts
+        public enum Contracts
         {
             pass = 0,
             small = 1,
             push = 2,
             guard = 3,
             guardWithout = 4,
-            guardAgainst = 5            
+            guardAgainst = 5,
+            smallChelem  = 6,
+            Chelem = 7
         }
 
         private Contracts _contract;

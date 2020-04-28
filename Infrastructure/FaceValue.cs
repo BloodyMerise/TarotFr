@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TarotFr.Domain
+namespace TarotFr.Infrastructure
 {
     internal class FaceValue
     {

@@ -1,6 +1,6 @@
 using NUnit.Framework;
-using TarotFr.Domain;
-using System.Linq;
+using TarotFr.Infrastructure;
+using TarotFr.Api;
 using System.Collections.Generic;
 using System;
 
@@ -10,8 +10,8 @@ namespace TarotFrTests
     {
         [SetUp]
         public void Setup()
-        {
-        }
+        { }            
+        
 
         static IEnumerable<Card> TestCards(bool onlyBasics, bool onlyOudlers)
         {
@@ -91,29 +91,7 @@ namespace TarotFrTests
             Card testCard = new Card(color, points);
             Assert.AreEqual(isTrumper, testCard.IsTrumper());
         }
-
-        [TestCaseSource(nameof(TestCards), new object[] { false, true })]
-        public void OudlerScoreIs45(Card testCard)
-        {
-            Assert.AreEqual(4.5M, testCard.Score());
-        }
-
-        [Test]
-        [TestCaseSource(nameof(TestCards), new object[] { true, false })]
-        public void BasicScore(Card testCard)
-        {
-            decimal score = testCard.Points() - 10;
-            score = (score > 0M) ? testCard.Points() - 9.5M : 0.5M;
-            Assert.AreEqual(score, testCard.Score());
-        }
-
-        [TestCase("trumpers", 11)]
-        public void TrumperScore05(string color, int point)
-        {
-            Card testCard = new Card(color, point);
-            Assert.AreEqual(0.5M, testCard.Score());
-        }
-                
+                        
         [Test]
         [TestCase("trumpers", 1, true)]
         [TestCase("trumpers", 8, true)]
@@ -142,27 +120,6 @@ namespace TarotFrTests
             Assert.AreEqual(expected, testCard < basic);
             Assert.AreEqual(true, testCard == basic);
             Assert.AreEqual(false, testCard != basic);
-        }
-
-        [TestCase("hearts", 14, 5)]
-        [TestCase("trumpers", 0, 5)]
-        [TestCase("spades", 2, 1)]
-        public void CountScoreIsCorrect(string color, int points, int expectedScore)
-        {
-            Card basic = new Card("hearts", 8);
-            Card testCard = new Card(color, points);
-
-            Assert.AreEqual(expectedScore, basic.CountScore(testCard));
-        }
-
-        [TestCase("hearts", 14)]
-        [TestCase("trumpers", 1)]
-        public void CountScoreThrowsWith2HighPointsCards(string color, int points)
-        {
-            Card testCard = new Card(color, points);
-            Card vsCard = new Card("spades", 13);
-
-            Assert.Throws<ArgumentException>(() => testCard.CountScore(vsCard));
         }
     }
 }

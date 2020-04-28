@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TarotFr.Domain
 {
-    interface IFaceValueService
+    class CardWinningRules
     {
     }
 }

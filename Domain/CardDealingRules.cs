@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TarotFr.Domain
 {
-    internal static class CardDealingRules
+    public static class CardDealingRules
     {
         public static int DogMaxCards(int nbPlayers)
         {

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
-using TarotFr.Domain;
+using TarotFr.Api;
+using TarotFr.Infrastructure;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -29,7 +30,7 @@ namespace TarotFrTests
             TarotTable dek = new TarotTable(true,true, players);
 
             raoul.MakeDealer();
-            raoul.GivesHandNbCardsFromDeck(dek, nbcards,georgette);
+            raoul.DealsCard(dek.Pop(nbcards), georgette);
 
             Assert.AreEqual(expectedNbCards, georgette.NbCardsInHand());
         }
@@ -39,102 +40,22 @@ namespace TarotFrTests
         {
             Player maurice = new Player("Maurice");
             Player hugolin = new Player("Hugolin");
-            Player marieJeanne = new Player("Marie-Jeanne");
-            LinkedList <Player> round = new LinkedList<Player>();
-            round.AddFirst(maurice);
-            round.AddFirst(hugolin);        
-            round.AddFirst(marieJeanne);
+            Player colette = new Player("Colette");
+            LinkedList <Player> players = new LinkedList<Player>();
+            players.AddFirst(maurice);
+            players.AddFirst(hugolin);        
+            players.AddFirst(colette);
 
-            TarotTable dek = new TarotTable(true,true, round);
-
-            round.AddFirst(maurice);
-            round.AddFirst(hugolin);
-            round.AddFirst(marieJeanne);
-            
-            maurice.DealsAllCardsFromDeck(dek, round);
+            TarotTable dek = new TarotTable(true,true, players);
+                        
+            maurice.DealsCard(dek.Pop(1), hugolin);
+            maurice.DealsCard(dek.Pop(100), colette);
 
             Assert.Zero(maurice.NbCardsInHand());
-            Assert.Zero(marieJeanne.NbCardsInHand());
+            Assert.Zero(colette.NbCardsInHand());
             Assert.Zero(hugolin.NbCardsInHand());
         }
 
-        [Test]
-        public void DealerDealsDeckTo3PlayersIsCorrect() {
-            LinkedList<Player> round = new LinkedList<Player>();
-            round.AddFirst(new Player("Raoul"));
-            round.AddFirst(new Player("Georgette"));
-            round.AddFirst(new Player("Robert"));           
-            
-            TarotTable deck = new TarotTable(true,true,round);
-            int sumPlayerScore = 0;
-            Player dealer = round.First();
-
-            dealer.MakeDealer();
-            dealer.DealsAllCardsFromDeck(deck, round);            
-            sumPlayerScore = dealer.ScoreInDog();
-
-            foreach(Player player in round)
-            {
-                sumPlayerScore += player.ScoreInHand();
-            }
-
-            Assert.AreEqual(90, sumPlayerScore,1);
-            Assert.AreEqual(dealer.NbCardsInHand(), round.Last().NbCardsInHand());
-            Assert.AreEqual(6, dealer.NbCardsInDog());            
-        }
-
-        [Test]
-        public void DealerDealsDeckTo4PlayersIsCorrect()
-        {
-            LinkedList<Player> round = new LinkedList<Player>();
-            round.AddFirst(new Player("SophiePetoncule"));
-            round.AddFirst(new Player("Hemiplegiane"));
-            round.AddFirst(new Player("MrMarcadet"));
-            round.AddFirst(new Player("JeanBulbe"));
-            TarotTable deck = new TarotTable(true,true,round);
-            int sumPlayerScore = 0;
-            Player dealer = round.First();
-
-            dealer.MakeDealer();
-            dealer.DealsAllCardsFromDeck(deck, round);
-            sumPlayerScore = dealer.ScoreInDog();
-
-            foreach (Player player in round)
-            {
-                sumPlayerScore += player.ScoreInHand();
-            }
-
-            Assert.AreEqual(90, sumPlayerScore, 1);
-            Assert.AreEqual(dealer.NbCardsInHand(), round.Last().NbCardsInHand());
-            Assert.AreEqual(6, dealer.NbCardsInDog());
-        }
-
-        [Test]
-        public void DealerDealsDeckTo5PlayersIsCorrect()
-        {
-            LinkedList<Player> round = new LinkedList<Player>();
-            round.AddFirst(new Player("SophiePetoncule"));
-            round.AddFirst(new Player("Hemiplegiane"));
-            round.AddFirst(new Player("MrMarcadet"));
-            round.AddFirst(new Player("Pef"));
-            round.AddFirst(new Player("JeanBulbe"));
-            TarotTable deck = new TarotTable(true,true,round);
-            int sumPlayerScore = 0;
-            Player dealer = round.First();
-
-            dealer.MakeDealer();
-            dealer.DealsAllCardsFromDeck(deck, round);
-            sumPlayerScore = dealer.ScoreInDog();
-
-            foreach (Player player in round)
-            {
-                sumPlayerScore += player.ScoreInHand();
-            }
-
-            Assert.AreEqual(90, sumPlayerScore, 1);
-            Assert.AreEqual(dealer.NbCardsInHand(), round.Last().NbCardsInHand());
-            Assert.AreEqual(3, dealer.NbCardsInDog());
-        }
 
         [Test]
         public void PlayerWithWinningContractIsAttacker()

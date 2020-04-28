@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace TarotFr.Domain
+namespace TarotFr.Api
 {
     //from https://stackoverflow.com/questions/716256/creating-a-circularly-linked-list-in-c
-    static class CircularLinkedList
+    public static class CircularLinkedList
     {
         public static LinkedListNode<T> NextOrFirst<T>(this LinkedListNode<T> current)
         {
