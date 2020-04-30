@@ -6,7 +6,7 @@ namespace TarotFr.Infrastructure
 {
     public class Card
     {
-        private Colors _color;
+        private Colors.CardColors _color;
         private FaceValue _faceValue;
         private double _cardScore;
         private bool _isOudler;
@@ -19,26 +19,31 @@ namespace TarotFr.Infrastructure
         
         public Card(string color, int points)
         {
-            _color = (Colors) Enum.Parse(typeof(Colors), color, true);
+            _color = (Colors.CardColors) Enum.Parse(typeof(Colors.CardColors), color, true); 
             _faceValue = new FaceValue(points);
-            _isOudler = checkOudler();
+            _isOudler = CheckOudler();
             _cardScore = CardCountingRules.GetPoints(IsTrumper(), _isOudler, _faceValue.GetPoints());
-            checkConsistency();
+            CheckConsistency();
         }
 
-        private bool checkOudler()
+        private bool CheckOudler()
         {
             List<int> oudlersPoints = new List<int> { 1, 21, 0 };        
             return IsTrumper() && oudlersPoints.Contains(_faceValue.GetPoints());            
         }
 
-        private void checkConsistency()
+        private void CheckConsistency()
         {
             int points = _faceValue.GetPoints();
             if (!IsTrumper())
             {
                 if (points > 14 ) throw new ArgumentOutOfRangeException("_faceValue",_faceValue.GetPoints(),"Invalid nbpoints for this card");
                 if (points == 0) throw new ArgumentOutOfRangeException("_faceValue", _faceValue.GetPoints(), "Invalid nbpoints for this card");
+            }
+            if(points > 14 && _color != Colors.CardColors.trumpers) { throw new ArgumentOutOfRangeException("_faceValue", _faceValue.GetPoints(), "Invalid nbpoints for this card"); }
+            if(points == 1 || points == 21 || points == 0)
+            {
+                if(IsTrumper() && !CheckOudler()) { throw new ArgumentOutOfRangeException("_faceValue", _faceValue.GetPoints(), "This card should be oudler"); }
             }
         }
 

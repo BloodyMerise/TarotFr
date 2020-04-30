@@ -9,9 +9,9 @@ namespace TarotFr.Api
 {
     public static class ListCardExtension
     {
-        public static int Score(this IEnumerable<Card> cardsToCount)
+        public static double Score(this IEnumerable<Card> cardsToCount)
         {
-            return (int)cardsToCount.Select(x => CardCountingRules.GetPoints(x.IsTrumper(),x.IsOudler(),x.Points())).Sum();
+            return cardsToCount.Select(x => CardCountingRules.GetPoints(x.IsTrumper(),x.IsOudler(),x.Points())).Sum();
         }
     }
 }

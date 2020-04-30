@@ -18,16 +18,18 @@ namespace TarotFr.Infrastructure
         public Player(string name)
         {
             if (String.IsNullOrEmpty(name)) name = "LeGrandMamamouchi";
-            else this.name = name;            
+            else this.name = name;
+            _hand = new List<Card>();
+            _dog = new List<Card>();
         }
 
         public void MakeDealer() { _isDealer = true; }
         public void MakeAttacker() { _isAttacker = true; }
         public void MakeDefenser() { _isDefenser = true; }
         public int NbCardsInHand() => _hand.Count;
-        public int ScoreInHand() => _hand.Score();
+        public double ScoreInHand() => _hand.Score();
         public int NbCardsInDog() => _dog.Count;
-        public int ScoreInDog() => _dog.Score();
+        public double ScoreInDog() => _dog.Score();
         public bool IsDealer() => _isDealer;
 
         private void ReceivesCard(Card card)

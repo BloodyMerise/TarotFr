@@ -39,10 +39,10 @@ namespace TarotFrTests
             }
         }
 
-        [TestCase("hearts", 14, 5)]
-        [TestCase("trumpers", 0, 5)]
-        [TestCase("spades", 2, 1)]
-        public void CountScoreIsCorrect(string color, int points, int expectedScore)
+        [TestCase("hearts", 14, 4.5)]
+        [TestCase("trumpers", 0, 4.5)]
+        [TestCase("spades", 2, 0.5)]
+        public void CountScoreIsCorrect(string color, int points, double expectedScore)
         {            
             List<Card> testCards = new List<Card>() { new Card(color, points) };
             Assert.AreEqual(expectedScore, testCards.Score());

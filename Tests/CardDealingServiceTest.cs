@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using TarotFr.Infrastructure;
+using TarotFr.Domain;
 using TarotFr.Api;
 
 namespace TarotFrTests
@@ -28,30 +29,28 @@ namespace TarotFrTests
             return players;
         }
 
-        [TestCase(3, 90, 6)]
-        [TestCase(4, 90, 6)]
-        [TestCase(5, 90, 3)]
-        public void DealerDealsDeckIsCorrect(int nbPlayers, int totalScore, int nbCardDogs)
+        [TestCase(3)]
+        [TestCase(4)]
+        [TestCase(5)]
+        public void DealerDealsDeckIsCorrect(int nbPlayers)
         {
             LinkedList<Player> players = Musketeers(nbPlayers);               
             TarotTable tarotTable = new TarotTable(true, true, players);
             CardDealingService service = new CardDealingService(players.Count);
-            int sumPlayerHands = 0;
+            int totalCardsInHand = 0;
 
             players.First.Value.MakeDealer();
-            service.DealsAllCardsFromDeck(tarotTable);           
+            service.DealsAllCardsFromDeck(tarotTable);
 
             foreach (Player player in players)
             {
-                sumPlayerHands += player.ScoreInHand();
-
+                totalCardsInHand += player.NbCardsInHand();
                 Assert.AreEqual(players.First.Value.NbCardsInHand(), player.NbCardsInHand());
-
-                if (player.IsDealer()) { Assert.AreEqual(nbCardDogs, player.NbCardsInDog()); }
-                else { Assert.AreEqual(0, player.NbCardsInDog()); }                
+                Assert.AreEqual(0, player.NbCardsInDog());
             }
 
-            Assert.AreEqual(90, sumPlayerHands, 1);            
+            Assert.AreEqual(78, totalCardsInHand + service.NbCardsInDog());
+            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), service.NbCardsInDog());
         }
     }
 }

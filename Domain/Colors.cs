@@ -6,6 +6,7 @@ namespace TarotFr.Domain
 {
     class Colors
     {
+        private CardColors _color;
         internal enum CardColors
         {
             hearts,
@@ -13,6 +14,6 @@ namespace TarotFr.Domain
             diamonds,
             clubs,
             trumpers
-        };
+        };        
     }
 }

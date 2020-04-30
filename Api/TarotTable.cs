@@ -12,7 +12,7 @@ namespace TarotFr.Api
         private Round _round;
 
         public bool DeckIsEmpty() { return _tarotDeck.Count == 0; }
-        public bool CheckScore(int expectedScore) { return _tarotDeck.Score() == expectedScore; }
+        public bool CheckScore(double expectedScore) { return _tarotDeck.Score() == expectedScore; }
         public Card DeckPop() { return _tarotDeck.Pop(); }
         public IEnumerable<Card> TakeAll() { return _tarotDeck.Take(_tarotDeck.Count); }
         public int NbCardsInDeck() { return _tarotDeck.Count; }
@@ -57,7 +57,7 @@ namespace TarotFr.Api
         //if asked to pop 3 but only 2 in deck, still yields the last 2
         public IEnumerable<Card> Pop(int nbCards)
         {            
-            if (nbCards < 0) yield return null;
+            if (nbCards < 0) yield break;
             for(int i = 0; i < nbCards; i++)
             {
                 if (_tarotDeck.Count == 0) break;

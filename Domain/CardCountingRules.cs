@@ -6,7 +6,7 @@ namespace TarotFr.Domain
 {
     public static class CardCountingRules
     {
-        private static double OudlerScore() => 5.0;
+        private static double OudlerScore() => 4.5;
         private static double TrumperScore() => 0.5;
         private static double BasicScore(int cardRank) => (cardRank > 10) ? cardRank - 9.5 : 0.5;
 
