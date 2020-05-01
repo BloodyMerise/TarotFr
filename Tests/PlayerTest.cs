@@ -8,11 +8,6 @@ namespace TarotFrTests
 {
     public class PlayerTest
     {
-        [SetUp]
-        public void Setup()
-        {            
-        }
-
         [TestCase(3,3)]
         [TestCase(-1,0)]
         [TestCase(0,0)]
@@ -22,12 +17,8 @@ namespace TarotFrTests
         {
             Player raoul = new Player("Raoul");
             Player georgette = new Player("Georgette");
-            LinkedList<Player> players = new LinkedList<Player>();
 
-            players.AddFirst(raoul);
-            players.AddFirst(georgette);
-
-            TarotTable dek = new TarotTable(true,true, players);
+            TarotDeck dek = new TarotDeck(false);
 
             raoul.MakeDealer();
             raoul.DealsCard(dek.Pop(nbcards), georgette);
@@ -36,17 +27,12 @@ namespace TarotFrTests
         }
 
         [Test]
-        public void NonDealerCannotDealCards()
+        public void NonDealerDoesntDealCards()
         {
             Player maurice = new Player("Maurice");
             Player hugolin = new Player("Hugolin");
             Player colette = new Player("Colette");
-            LinkedList <Player> players = new LinkedList<Player>();
-            players.AddFirst(maurice);
-            players.AddFirst(hugolin);        
-            players.AddFirst(colette);
-
-            TarotTable dek = new TarotTable(true,true, players);
+            TarotDeck dek = new TarotDeck(false);
                         
             maurice.DealsCard(dek.Pop(1), hugolin);
             maurice.DealsCard(dek.Pop(100), colette);
@@ -55,8 +41,7 @@ namespace TarotFrTests
             Assert.Zero(colette.NbCardsInHand());
             Assert.Zero(hugolin.NbCardsInHand());
         }
-
-
+        
         [Test]
         public void PlayerWithWinningContractIsAttacker()
         {

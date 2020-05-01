@@ -32,7 +32,7 @@ namespace TarotFrTests
         [TestCase(3)]
         [TestCase(4)]
         [TestCase(5)]
-        public void DealerDealsDeckIsCorrect(int nbPlayers)
+        public void AlwaysDealsCorrectly(int nbPlayers)
         {
             LinkedList<Player> players = Musketeers(nbPlayers);               
             TarotTable tarotTable = new TarotTable(true, true, players);
@@ -49,8 +49,8 @@ namespace TarotFrTests
                 Assert.AreEqual(0, player.NbCardsInDog());
             }
 
-            Assert.AreEqual(78, totalCardsInHand + service.NbCardsInDog());
-            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), service.NbCardsInDog());
+            Assert.AreEqual(78, totalCardsInHand + tarotTable.CountDogCards());
+            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), tarotTable.CountDogCards());
         }
     }
 }

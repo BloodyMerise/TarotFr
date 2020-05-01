@@ -8,8 +8,8 @@ namespace TarotFr.Infrastructure
     {
         private Colors.CardColors _color;
         private FaceValue _faceValue;
-        private double _cardScore;
-        private bool _isOudler;
+        private readonly double _cardScore;
+        private readonly bool _isOudler;
 
         public bool IsOudler() => _isOudler;
         public bool IsTrumper() => _color.Equals(Colors.CardColors.trumpers);

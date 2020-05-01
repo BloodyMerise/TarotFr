@@ -5,8 +5,7 @@ using TarotFr.Api;
 namespace TarotFr.Infrastructure
 {
     public class Player
-    {
-        public string name { get; }
+    {        
         private List<Card> _hand { get; set; }
         private List<Card> _dog { get; set;}
         private LinkedList<List<Card>> _wonHands = new LinkedList<List<Card>>();
@@ -14,11 +13,12 @@ namespace TarotFr.Infrastructure
         private bool _isDealer = false;
         private bool _isAttacker = false;
         private bool _isDefenser = false;
+        public string Name { get; }
 
         public Player(string name)
         {
             if (String.IsNullOrEmpty(name)) name = "LeGrandMamamouchi";
-            else this.name = name;
+            else Name = name;
             _hand = new List<Card>();
             _dog = new List<Card>();
         }

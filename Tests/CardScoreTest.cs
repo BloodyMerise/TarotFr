@@ -68,7 +68,7 @@ namespace TarotFrTests
         }
 
         [TestCase("trumpers", 11)]
-        public void TrumperScore05(string color, int point)
+        public void TrumperScoreIs05(string color, int point)
         {
             List<Card> testCards = new List<Card>() { new Card(color, point) } ;
             Assert.AreEqual(0.5, testCards.Score());

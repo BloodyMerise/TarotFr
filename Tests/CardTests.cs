@@ -58,13 +58,13 @@ namespace TarotFrTests
         [TestCase("clubs", -1)]        
         public void CreateOnlyValidCards(string color, int point)
         {            
-            Assert.Throws<ArgumentOutOfRangeException> (() => new Card(color, point));
+            Assert.Catch<ArgumentOutOfRangeException> (() => new Card(color, point));
         }
 
         [TestCase("rewe", -1)]
         public void CardThrowsOnWrongInput(string color, int point)
         {
-            Assert.Throws<ArgumentException>(() => new Card(color, point)); //enum only sends ArgumentException
+            Assert.Catch<ArgumentException>(() => new Card(color, point)); //enum only sends ArgumentException
         }
 
         [Test]

@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TarotFr.Domain
 {
     public static class CardDealingRules
     {
+        public const int MaxCardsInDeck = 78;
+        public const int NbCardsToDeal = 3;
+
         public static int DogMaxCards(int nbPlayers)
         {
             switch (nbPlayers)
@@ -19,8 +20,6 @@ namespace TarotFr.Domain
                     throw new NotImplementedException();
             }
         }
-
-        public static int NbCardsToDeal() => 3;
     }
 }
 
