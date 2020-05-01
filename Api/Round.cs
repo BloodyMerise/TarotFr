@@ -5,16 +5,18 @@ using TarotFr.Infrastructure;
 
 namespace TarotFr.Api
 {
-    class Round
+    public class Round
     {
         private LinkedList<Player> _players = new LinkedList<Player>();
-        private bool _roundStartsFromTheLeft = true;
-        private int _roundNumber = 0;        
+        private readonly bool _roundStartsFromTheLeft = true;
+        private readonly int _roundNumber = 0;        
         public int GetNbPlayers() => _players.Count;
 
         public Round(bool startsFromLeft, LinkedList<Player> players)
         {
             _roundStartsFromTheLeft = startsFromLeft;
+
+            if (players is null) throw new ArgumentOutOfRangeException("Players cannot be null in Round");
             _players = players;
         }
 
@@ -26,6 +28,16 @@ namespace TarotFr.Api
             }
 
             return null;
+        }
+
+        public bool IsPlayerIn(Player player)
+        {
+            foreach(Player roundPlayer in _players)
+            {
+                if (roundPlayer.Name.Equals(player.Name)) return true;
+            }
+
+            return false;            
         }
 
         public Player NextPlayer(Player player)

@@ -49,8 +49,8 @@ namespace TarotFrTests
                 Assert.AreEqual(0, player.NbCardsInDog());
             }
 
-            Assert.AreEqual(78, totalCardsInHand + tarotTable.CountDogCards());
-            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), tarotTable.CountDogCards());
+            Assert.AreEqual(78, totalCardsInHand + tarotTable.CountDog());
+            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), tarotTable.CountDog());
         }
     }
 }

@@ -20,14 +20,14 @@ namespace TarotFr.Api
         {
             TarotDeck deck = new TarotDeck(true);
             Player dealer = tarotTable.GetRoundDealer();
-            if (dealer is null) return;  // pick one randomly ?                      
+            if (dealer is null) throw new NullReferenceException("Could not find a dealer in the players of tarotTable");
 
             Player nextPlayer = dealer;
 
             while (!deck.IsEmpty())
             {
                 dealer.DealsCard(deck.Pop(_step), tarotTable.NextPlayer(nextPlayer));
-                tarotTable.SendCardsToDog(CardsForDog(deck, tarotTable.CountDogCards()));
+                tarotTable.SendCardsToDog(CardsForDog(deck, tarotTable.CountDog()));
                 nextPlayer = tarotTable.NextPlayer(nextPlayer);
             }
         }      

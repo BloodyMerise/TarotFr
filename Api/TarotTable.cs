@@ -15,12 +15,12 @@ namespace TarotFr.Api
             _round = new Round(startsFromLeft, players);
         }
 
-        public int CountDogCards() => _dog.Count;
+        public int CountDog() => _dog.Count;
         public void SendCardsToDog(IEnumerable<Card> cards) { if(!(cards is null)) _dog.AddRange(cards); }
         
         public Player NextPlayer(Player player)
         {
-            // if player not in round, crash ? null ?
+            
             return _round.NextPlayer(player);
         }
         
