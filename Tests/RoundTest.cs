@@ -8,18 +8,17 @@ namespace TarotFrTests
 {
     public class RoundTest
     {
-        private LinkedList<Player> GeneratePlayers() {
-            Player player1 = new Player("Josette");
-            Player player2 = new Player("Fanfan");
-            Player player3 = new Player("Ursule");
-            LinkedList<Player> players = new LinkedList<Player>();
-            players.AddLast(player1);
-            players.AddLast(player2);
-            players.AddLast(player3);
+        private List<Player> GeneratePlayers(int nbPlayers)
+        {
+            List<Player> allPlayers = new List<Player>() {
+                    new Player("Josette"),
+                    new Player("Fanfan"),
+                    new Player("Ursule"),
+                    new Player("Angele"),
+                    new Player("Simeon")
+            };
 
-            player2.MakeDealer();
-
-            return players;
+            return allPlayers.GetRange(0, nbPlayers);
         }
 
         [Test]
@@ -30,23 +29,63 @@ namespace TarotFrTests
 
         [Test]
         public void CanFindPlayer()
-        {            
+        {
             Player playerIn = new Player("Josette");
             Player playerOut = new Player("asd");
-            Round round = new Round(true, GeneratePlayers());
+            Round round = new Round(true, GeneratePlayers(3));
 
             Assert.True(round.IsPlayerIn(playerIn));
             Assert.False(round.IsPlayerIn(playerOut));
         }
 
-        [TestCase(false,"Josette")]
-        [TestCase(true,"Ursule")]
-        public void RoundIsGoingInTheRightDirection(bool isLeft,string nextPlayerName)
-        {                        
-            Round round = new Round(isLeft, GeneratePlayers());            
-            Player dealer = round.FindDealer();
+        [TestCase(3, 2)]
+        [TestCase(4, 1)]
+        [TestCase(5, 4)]
+        [TestCase(3, 1)]
+        [TestCase(4, 0)]
+        [TestCase(4, 2)]
+        [TestCase(5, 0)]
+        public void RoundFinishWithDealerAndRotateLeft(int nbPlayers, int dealerPosition)
+        {
+            List<Player> roundPlayers = GeneratePlayers(nbPlayers);
+            Round round = new Round(true, roundPlayers);
 
-            Assert.AreEqual(nextPlayerName, round.NextPlayer(dealer).Name);
+            roundPlayers[dealerPosition].MakeDealer();
+            
+            for (int i = dealerPosition + 1; i < nbPlayers; i++)
+            {
+                Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);
+            }
+
+            for (int i = 0; i < dealerPosition + 1; i++)
+            {
+                Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);
+            }
+        }
+
+        [TestCase(3, 1)]
+        [TestCase(4, 2)]
+        [TestCase(5, 0)]
+        [TestCase(3, 2)]
+        [TestCase(4, 1)]
+        [TestCase(4, 0)]
+        [TestCase(5, 4)]
+        public void RoundFinishWithDealerAndRotateRight(int nbPlayers, int dealerPosition)
+        {
+            List<Player> roundPlayers = GeneratePlayers(nbPlayers);
+            Round round = new Round(false, roundPlayers);
+
+            roundPlayers[dealerPosition].MakeDealer();
+            
+            for (int i = dealerPosition - 1; i >= 0 ; i--)
+            {
+                Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);
+            }
+
+            for (int i = nbPlayers -1; i > dealerPosition - 1; i--)
+            {
+                Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);
+            }
         }
     }
 }

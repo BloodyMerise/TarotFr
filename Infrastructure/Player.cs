@@ -8,11 +8,11 @@ namespace TarotFr.Infrastructure
     {        
         private List<Card> _hand { get; set; }
         private List<Card> _dog { get; set;}
-        private LinkedList<List<Card>> _wonHands = new LinkedList<List<Card>>();
-        private Contract _contract = new Contract(null);
-        private bool _isDealer = false;
-        private bool _isAttacker = false;
-        private bool _isDefenser = false;
+        private LinkedList<List<Card>> _wonHands;
+        private Contract _contract;
+        private bool _isDealer;
+        private bool _isAttacker;
+        private bool _isDefenser;
         public string Name { get; }
 
         public Player(string name)
@@ -21,6 +21,11 @@ namespace TarotFr.Infrastructure
             else Name = name;
             _hand = new List<Card>();
             _dog = new List<Card>();
+            _isDealer = false;
+            _contract = new Contract(null);
+            _isAttacker = false;
+            _isDefenser = false;
+            _wonHands = new LinkedList<List<Card>>();            
         }
 
         public void MakeDealer() { _isDealer = true; }

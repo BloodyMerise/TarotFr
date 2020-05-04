@@ -18,11 +18,11 @@ namespace TarotFr.Tests
 
         private TarotTable CreateTable(int nbPlayers, bool startsLeft, bool needDealer)
         {
-            LinkedList<Player> round = new LinkedList<Player>();
+            List<Player> round = new List<Player>();
 
             foreach(Player player in PlayerGenerator(nbPlayers))
             {                
-                round.AddFirst(player);
+                round.Add(player);
             }
 
             if (needDealer) round.First().MakeDealer();
@@ -31,15 +31,24 @@ namespace TarotFr.Tests
         }
 
         [Test]
-        public void RoundNextPlayerChangeAccordingToRoundDirection()
+        public void RoundNextPlayerChangeAccordingToRoundDirectionWithPlayer()
         {            
             TarotTable tableLeft = CreateTable(3, true, true);
-            TarotTable tableRight = CreateTable(3, false, true);
+            TarotTable tableRight = CreateTable(3, false, true);           
 
             Player dealerLeft = tableLeft.GetRoundDealer();
             Player dealerRight = tableRight.GetRoundDealer();
 
             Assert.AreNotEqual(tableLeft.NextPlayer(dealerLeft).Name, tableRight.NextPlayer(dealerRight).Name);
+        }
+
+        [Test]
+        public void RoundNextPlayerChangeAccordingToRoundDirectionWithoutPlayer()
+        {
+            TarotTable tableLeft = CreateTable(3, true, true);
+            TarotTable tableRight = CreateTable(3, false, true);
+
+            Assert.AreNotEqual(tableLeft.NextPlayer().Name, tableRight.NextPlayer().Name);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using TarotFr.Infrastructure;
 using TarotFr.Domain;
@@ -8,7 +9,7 @@ namespace TarotFrTests
 {
     class CardDealingServiceTest
     {
-        private LinkedList<Player> Musketeers(int nb)
+        private List<Player> Musketeers(int nb)
         {
             string[] names = new string[]
             {
@@ -18,12 +19,12 @@ namespace TarotFrTests
                 "Aramis",
                 "Albert"
             };
-
-            LinkedList<Player> players = new LinkedList<Player>();
-
+           
+            List<Player> players = new List<Player>();
+            
             while( nb > 0)
             {
-                players.AddFirst(new Player(names[nb-1]));
+                players.Add(new Player(names[nb-1]));
                 nb--;
             }
             return players;
@@ -34,18 +35,18 @@ namespace TarotFrTests
         [TestCase(5)]
         public void AlwaysDealsCorrectly(int nbPlayers)
         {
-            LinkedList<Player> players = Musketeers(nbPlayers);               
+            List<Player> players = Musketeers(nbPlayers);               
             TarotTable tarotTable = new TarotTable(true, true, players);
             CardDealingService service = new CardDealingService(players.Count);
             int totalCardsInHand = 0;
 
-            players.First.Value.MakeDealer();
+            players[0].MakeDealer();
             service.DealsAllCardsFromDeck(tarotTable);
 
             foreach (Player player in players)
             {
                 totalCardsInHand += player.NbCardsInHand();
-                Assert.AreEqual(players.First.Value.NbCardsInHand(), player.NbCardsInHand());
+                Assert.AreEqual(players[0].NbCardsInHand(), player.NbCardsInHand());
                 Assert.AreEqual(0, player.NbCardsInDog());
             }
 
