@@ -87,5 +87,24 @@ namespace TarotFrTests
                 Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);
             }
         }
+
+        [TestCase(3, 5, 1)]
+        [TestCase(4, 4, 1)]
+        [TestCase(4, 7, 1)]
+        [TestCase(4, 0, 0)]
+        [TestCase(5, 1, 0)]
+        public void RoundNumberIsCorrect(int nbPlayers, int nbTimesPlayed, int expectedNumberOfRounds)
+        {
+            List<Player> roundPlayers = GeneratePlayers(nbPlayers);
+            Round round = new Round(false, roundPlayers);
+            roundPlayers[0].MakeDealer();
+
+            for (int i = 0; i < nbTimesPlayed; i++)
+            {
+                round.NextPlayer();
+            }
+
+            Assert.AreEqual(expectedNumberOfRounds, round.RoundNumber);
+        }
     }
 }

@@ -39,7 +39,7 @@ namespace TarotFrTests
         }
 
         [Test]
-        public void PoppedCardsCantBePoppedAgain()
+        public void Pops0CardsWhenEmpty()
         {
             TarotDeck deck = new TarotDeck(false);
             IEnumerable<Card> tst = deck.Pop(CardDealingRules.MaxCardsInDeck);
@@ -47,6 +47,16 @@ namespace TarotFrTests
 
             Assert.IsTrue(deck.IsEmpty());
             Assert.AreEqual(0, deck.Pop(12).Count());
+        }
+
+        [Test]
+        public void AllCardsInDeckAreDifferent()
+        {
+            TarotDeck deck = new TarotDeck(false);
+            int nbCardsInDeck = deck.NbCardsInDeck();
+            IEnumerable<Card> allCards = deck.Pop(nbCardsInDeck);
+
+            Assert.AreEqual(nbCardsInDeck, allCards.Distinct().Count());
         }
 
         [TestCase(-100)]

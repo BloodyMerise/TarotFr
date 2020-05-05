@@ -38,6 +38,7 @@ namespace TarotFrTests
             List<Player> players = Musketeers(nbPlayers);               
             TarotTable tarotTable = new TarotTable(true, true, players);
             CardDealingService service = new CardDealingService(players.Count);
+
             int totalCardsInHand = 0;
 
             players[0].MakeDealer();
@@ -45,13 +46,13 @@ namespace TarotFrTests
 
             foreach (Player player in players)
             {
-                totalCardsInHand += player.NbCardsInHand();
-                Assert.AreEqual(players[0].NbCardsInHand(), player.NbCardsInHand());
-                Assert.AreEqual(0, player.NbCardsInDog());
+                totalCardsInHand += player.NbCardsInHand();                
+                Assert.AreEqual(players[0].NbCardsInHand(), player.NbCardsInHand()); //all players have same nb cards
+                Assert.AreEqual(0, player.NbCardsInDog()); //no player has a dog
             }
 
-            Assert.AreEqual(78, totalCardsInHand + tarotTable.CountDog());
-            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), tarotTable.CountDog());
+            Assert.AreEqual(CardDealingRules.MaxCardsInDeck, totalCardsInHand + tarotTable.CountDog()); //all cards are dealt
+            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), tarotTable.CountDog()); //the dog has expected number of cards
         }
     }
 }

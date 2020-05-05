@@ -19,6 +19,7 @@ namespace TarotFr.Infrastructure
         {
             if (String.IsNullOrEmpty(name)) name = "LeGrandMamamouchi";
             else Name = name;
+
             _hand = new List<Card>();
             _dog = new List<Card>();
             _isDealer = false;
