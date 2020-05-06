@@ -52,7 +52,7 @@ namespace TarotFrTests
             }
 
             Assert.AreEqual(CardDealingRules.MaxCardsInDeck, totalCardsInHand + tarotTable.CountDog()); //all cards are dealt
-            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), tarotTable.CountDog()); //the dog has expected number of cards
+            Assert.AreEqual(CardDealingRules.DogMaxCards(nbPlayers), tarotTable.CountDog()); //dog has expected number of cards
         }
     }
 }

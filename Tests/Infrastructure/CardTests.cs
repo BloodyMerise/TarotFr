@@ -11,7 +11,6 @@ namespace TarotFrTests
         [SetUp]
         public void Setup()
         { }            
-        
 
         static IEnumerable<Card> TestCards(bool onlyBasics, bool onlyOudlers)
         {
@@ -51,7 +50,7 @@ namespace TarotFrTests
             Assert.DoesNotThrow(() => new Card(card.getColor(), card.Points()));
         }
 
-        [Test]
+        
         [TestCase("hearts", 15)]
         [TestCase("clubs", 0)]
         [TestCase("trumpers", 22)]
@@ -66,8 +65,7 @@ namespace TarotFrTests
         {
             Assert.Catch<ArgumentException>(() => new Card(color, point)); //enum only sends ArgumentException
         }
-
-        [Test]
+        
         [TestCase("hearts", 11, false)]
         [TestCase("trumpers", 11, false)]
         [TestCase("spades", 9, false)]
@@ -91,35 +89,36 @@ namespace TarotFrTests
             Card testCard = new Card(color, points);
             Assert.AreEqual(isTrumper, testCard.IsTrumper());
         }
-                        
-        [Test]
+                                
         [TestCase("trumpers", 1, true)]
         [TestCase("trumpers", 8, true)]
         [TestCase("trumpers", 21, true)]
         [TestCase("trumpers", 0, false)]
         [TestCase("hearts", 13, true)]
-        [TestCase("spades", 7, false)]
+        [TestCase("spades", 7, false)]        
         public void CheckCardBeatsCard(string color, int points, bool expected)
         {
             Card basic = new Card("hearts", 8);
             Card testCard = new Card(color, points);
 
-            Assert.AreEqual(true, testCard != basic);
+            Assume.That(testCard != basic);
+
             Assert.AreEqual(expected, testCard > basic);
             Assert.AreEqual(!expected, testCard < basic);
         }
 
-        [TestCase("hearts", 8, false)]
-        [TestCase("spades", 8, false)]
-        public void CardsOfSameStrengthDontWin(string color, int points, bool expected)
+        [TestCase("hearts", 8)]
+        [TestCase("spades", 8)]
+        public void CardsOfSameStrengthDontWin(string color, int points)
         {
             Card basic = new Card("hearts", 8);
             Card testCard = new Card(color, points);
 
-            Assert.AreEqual(expected, testCard > basic);
-            Assert.AreEqual(expected, testCard < basic);
-            Assert.AreEqual(true, testCard == basic);
-            Assert.AreEqual(false, testCard != basic);
+            Assume.That(testCard == basic);
+
+            Assert.False(testCard != basic);
+            Assert.False(testCard > basic);
+            Assert.False(testCard < basic);
         }
     }
 }

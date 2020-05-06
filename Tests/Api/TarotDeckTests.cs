@@ -75,9 +75,10 @@ namespace TarotFrTests
         public void PoppingInvalidNbCardsDoesNotRemoveFromDeck(int nbCards)
         {
             TarotDeck deck = new TarotDeck(false);
-            IEnumerable<Card> tst = deck.Pop(nbCards + 1);
+            IEnumerable<Card> tst = deck.Pop(nbCards);
             tst.Score();
-            Assert.False(deck.IsEmpty());
+
+            Assert.AreEqual(CardDealingRules.MaxCardsInDeck, deck.NbCardsInDeck());
         }
 
         [Test]
