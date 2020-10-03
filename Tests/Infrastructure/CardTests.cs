@@ -90,7 +90,7 @@ namespace TarotFrTests
             Assert.AreEqual(isTrumper, testCard.IsTrumper());
         }
                                 
-        [TestCase("trumpers", 1, true)]
+        /*[TestCase("trumpers", 1, true)]
         [TestCase("trumpers", 8, true)]
         [TestCase("trumpers", 21, true)]
         [TestCase("trumpers", 0, false)]
@@ -119,6 +119,6 @@ namespace TarotFrTests
             Assert.False(testCard != basic);
             Assert.False(testCard > basic);
             Assert.False(testCard < basic);
-        }
+        }*/
     }
 }

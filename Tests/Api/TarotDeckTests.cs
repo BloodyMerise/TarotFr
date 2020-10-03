@@ -12,7 +12,7 @@ namespace TarotFrTests
         static IEnumerable<(List<Card>, double)> TestCardLists()
         {
             TarotDeck dek = new TarotDeck(true);
-            List<Card> wholeDeck = dek.Pop(CardDealingRules.MaxCardsInDeck).ToList();
+            List<Card> wholeDeck = dek.Pop(DealingRules.MaxCardsInDeck).ToList();
 
             yield return (new List<Card>() { new Card("hearts", 8) }, 0.5);
             yield return (new List<Card>() { new Card("trumpers", 1) }, 4.5);
@@ -35,14 +35,14 @@ namespace TarotFrTests
         public void PoppingMoreCardsThanAvailableReturnsOnlyAvailableCards()
         {
             TarotDeck deck = new TarotDeck(false);
-            Assert.AreEqual(CardDealingRules.MaxCardsInDeck,deck.Pop(CardDealingRules.MaxCardsInDeck + 10 ).Count());            
+            Assert.AreEqual(DealingRules.MaxCardsInDeck,deck.Pop(DealingRules.MaxCardsInDeck + 10 ).Count());            
         }
 
         [Test]
         public void Pops0CardsWhenEmpty()
         {
             TarotDeck deck = new TarotDeck(false);
-            IEnumerable<Card> tst = deck.Pop(CardDealingRules.MaxCardsInDeck);
+            IEnumerable<Card> tst = deck.Pop(DealingRules.MaxCardsInDeck);
             tst.Score(); // consume the enumerable
 
             Assert.IsTrue(deck.IsEmpty());
@@ -61,7 +61,7 @@ namespace TarotFrTests
 
         [TestCase(-100)]
         [TestCase(0)]
-        [TestCase(CardDealingRules.MaxCardsInDeck)]        
+        [TestCase(DealingRules.MaxCardsInDeck)]        
         public void PoppingInvalidNbCardsDoesNotThrow(int nbCards)
         {
             TarotDeck deck = new TarotDeck(false);
@@ -78,21 +78,21 @@ namespace TarotFrTests
             IEnumerable<Card> tst = deck.Pop(nbCards);
             tst.Score();
 
-            Assert.AreEqual(CardDealingRules.MaxCardsInDeck, deck.NbCardsInDeck());
+            Assert.AreEqual(DealingRules.MaxCardsInDeck, deck.NbCardsInDeck());
         }
 
         [Test]
         public void NewTarotDeckHasCorrectNumberOfCards()
         {
             TarotDeck deck = new TarotDeck(false);
-            Assert.AreEqual(CardDealingRules.MaxCardsInDeck, deck.Pop(CardDealingRules.MaxCardsInDeck).Count());
+            Assert.AreEqual(DealingRules.MaxCardsInDeck, deck.Pop(DealingRules.MaxCardsInDeck).Count());
         }
 
         [Test]
         public void TarotDeckIsCorrect()
         {
             TarotDeck deck = new TarotDeck(false);
-            List<Card> allCards = deck.Pop(CardDealingRules.MaxCardsInDeck).ToList();
+            List<Card> allCards = deck.Pop(DealingRules.MaxCardsInDeck).ToList();
 
             Assert.AreEqual(14, allCards.Where(x => x.getColor() == "hearts").Count());
             Assert.AreEqual(22, allCards.Where(x => x.getColor() == "trumpers").Count());

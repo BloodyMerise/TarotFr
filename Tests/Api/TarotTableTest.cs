@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using TarotFr.Api;
-using TarotFr.Infrastructure;
+using TarotFr.Domain;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -10,9 +10,10 @@ namespace TarotFr.Tests
     {
         static IEnumerable<Player> PlayerGenerator(int nbPlayers)
         {
+            PlayerService ps = new PlayerService();
             for(int i=0; i < nbPlayers; i++)
             { 
-                yield return new Player("Prosper_" + i.ToString());                
+                yield return ps.CreatePlayer("Prosper_" + i.ToString(),false,false);                
             }            
         }
 
@@ -25,7 +26,7 @@ namespace TarotFr.Tests
                 round.Add(player);
             }
 
-            if (needDealer) round.First().MakeDealer();
+            if (needDealer) round.First().Dealer = true;
 
             return new TarotTable(true, startsLeft, round);
         }
@@ -36,8 +37,8 @@ namespace TarotFr.Tests
             TarotTable tableLeft = CreateTable(3, true, true);
             TarotTable tableRight = CreateTable(3, false, true);           
 
-            Player dealerLeft = tableLeft.GetRoundDealer();
-            Player dealerRight = tableRight.GetRoundDealer();
+            Player dealerLeft = tableLeft.GetDealer();
+            Player dealerRight = tableRight.GetDealer();
 
             Assert.AreNotEqual(tableLeft.NextPlayer(dealerLeft).Name, tableRight.NextPlayer(dealerRight).Name);
         }

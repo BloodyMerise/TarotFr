@@ -45,9 +45,9 @@ namespace TarotFr.Api
             _deck.Push(new Card(Colors.CardColors.trumpers.ToString(), 0));
 
             //Check consistency
-            if (_deck.Count != CardDealingRules.MaxCardsInDeck)
+            if (_deck.Count != DealingRules.MaxCardsInDeck)
             {
-                throw new Exception($"Wrong total number of cards: expected {CardDealingRules.MaxCardsInDeck} but was {_deck.Count}");
+                throw new Exception($"Wrong total number of cards: expected {DealingRules.MaxCardsInDeck} but was {_deck.Count}");
             }
 
             if (!CheckScore(CardCountingRules.MaxScore))

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TarotFr.Domain;
 using TarotFr.Infrastructure;
 
 namespace TarotFr.Api
@@ -16,6 +17,7 @@ namespace TarotFr.Api
         }
 
         public int CountDog() => _dog.Count;
+        public int NbPlayers() => _round.GetNbPlayers();
         public void SendCardsToDog(IEnumerable<Card> cards) { if(!(cards is null)) _dog.AddRange(cards); }
         
         public Player NextPlayer(Player player)
@@ -30,10 +32,10 @@ namespace TarotFr.Api
 
         public Player AuctionWinner()
         {
-            return new Player(null);
+            return new Player();
         }
 
-        public Player GetRoundDealer()
+        public Player GetDealer()
         {
             return _round.FindDealer();
         }

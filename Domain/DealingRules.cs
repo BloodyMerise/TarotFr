@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TarotFr.Domain
 {
-    public static class CardDealingRules
+    public class DealingRules
     {
         public const int MaxCardsInDeck = 78;
         public const int NbCardsToDeal = 3;
+        public int[] PossibleNbPlayers = new int[] { 3, 4, 5 };
 
-        public static int DogMaxCards(int nbPlayers)
+        public int DogMaxCards(int nbPlayers)
         {
             switch (nbPlayers)
             {

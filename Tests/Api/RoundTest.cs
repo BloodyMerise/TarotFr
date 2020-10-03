@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
-using TarotFr.Infrastructure;
+using TarotFr.Domain;
 using TarotFr.Api;
 using System;
 
@@ -8,16 +8,31 @@ namespace TarotFrTests
 {
     public class RoundTest
     {
+        PlayerService _ps = new PlayerService();
+
+        static IEnumerable<Tuple<int,int>> TestPlayersNbAndPosition()
+        {
+            DealingRules dr = new DealingRules();
+            foreach(int nbPlayer in dr.PossibleNbPlayers)
+            {
+                for(int i = 0; i < nbPlayer; i++)
+                {
+                    yield return new Tuple<int,int> (nbPlayer, i);
+                }                
+            }
+        }
         private List<Player> GeneratePlayers(int nbPlayers)
         {
-            List<Player> allPlayers = new List<Player>() {
-                    new Player("Josette"),
-                    new Player("Fanfan"),
-                    new Player("Ursule"),
-                    new Player("Angele"),
-                    new Player("Simeon")
+            var playerNames = new List<string> { 
+                    "Josette",
+                    "Fanfan",
+                    "Ursule",
+                    "Angele",
+                    "Simeon"
             };
 
+            var allPlayers = _ps.CreatePlayers(playerNames) as List<Player>;
+            
             return allPlayers.GetRange(0, nbPlayers);
         }
 
@@ -30,27 +45,24 @@ namespace TarotFrTests
         [Test]
         public void CanFindPlayer()
         {
-            Player playerIn = new Player("Josette");
-            Player playerOut = new Player("asd");
+            Player playerIn = _ps.CreatePlayer("Josette", false, false);
+            Player playerOut = _ps.CreatePlayer("JoseADaewq", false, false);
             Round round = new Round(true, GeneratePlayers(3));
 
             Assert.True(round.IsPlayerIn(playerIn));
             Assert.False(round.IsPlayerIn(playerOut));
         }
 
-        [TestCase(3, 2)]
-        [TestCase(4, 1)]
-        [TestCase(5, 4)]
-        [TestCase(3, 1)]
-        [TestCase(4, 0)]
-        [TestCase(4, 2)]
-        [TestCase(5, 0)]
-        public void RoundFinishWithDealerAndRotateLeft(int nbPlayers, int dealerPosition)
+        [TestCaseSource(nameof(TestPlayersNbAndPosition))]
+        public void RoundFinishWithDealerAndRotateLeft(Tuple<int,int> input)
         {
+            int nbPlayers = input.Item1;
+            int dealerPosition = input.Item2;
+
             List<Player> roundPlayers = GeneratePlayers(nbPlayers);
             Round round = new Round(true, roundPlayers);
 
-            roundPlayers[dealerPosition].MakeDealer();
+            _ps.MakeDealer(roundPlayers[dealerPosition]);
             
             for (int i = dealerPosition + 1; i < nbPlayers; i++)
             {
@@ -63,29 +75,44 @@ namespace TarotFrTests
             }
         }
 
-        [TestCase(3, 1)]
-        [TestCase(4, 2)]
-        [TestCase(5, 0)]
-        [TestCase(3, 2)]
-        [TestCase(4, 1)]
-        [TestCase(4, 0)]
-        [TestCase(5, 4)]
-        public void RoundFinishWithDealerAndRotateRight(int nbPlayers, int dealerPosition)
+        [TestCaseSource(nameof(TestPlayersNbAndPosition))]
+        public void RoundFinishWithDealerAndRotateRight(Tuple<int, int> input)
         {
+            int nbPlayers = input.Item1;
+            int dealerPosition = input.Item2;
+
             List<Player> roundPlayers = GeneratePlayers(nbPlayers);
-            Round round = new Round(false, roundPlayers);
+            Round round = new Round(true, roundPlayers);
 
-            roundPlayers[dealerPosition].MakeDealer();
-            
-            for (int i = dealerPosition - 1; i >= 0 ; i--)
+            _ps.MakeDealer(roundPlayers[dealerPosition]);
+
+            //for (int i = dealerPosition - 1; i >= 0 ; i--)
+            for (int i = dealerPosition + 1; i < nbPlayers; i++)
             {
                 Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);
             }
 
-            for (int i = nbPlayers -1; i > dealerPosition - 1; i--)
+            //for (int i = nbPlayers -1; i > dealerPosition - 1; i--)
+            for (int i = 0; i < dealerPosition + 1; i++)
             {
                 Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);
             }
+        }
+
+        [Test]
+        public void RoundRotatesRightAndLeftCheck()
+        {
+            List<Player> roundPlayers = GeneratePlayers(3);
+            _ps.MakeDealer(roundPlayers[2]);
+            Round roundLeft = new Round(true, roundPlayers);
+            Round roundRight = new Round(false, roundPlayers);
+
+            string nextNameWhenLeft = roundLeft.NextPlayer().Name;
+            string nextNameWhenRight = roundRight.NextPlayer().Name;
+
+            Assert.That(nextNameWhenLeft, Is.Not.EqualTo(nextNameWhenRight));
+            Assert.That(nextNameWhenLeft, Is.EqualTo("Josette"));
+            Assert.That(nextNameWhenRight, Is.EqualTo("Fanfan"));
         }
 
         [TestCase(3, 5, 1)]
@@ -97,7 +124,7 @@ namespace TarotFrTests
         {
             List<Player> roundPlayers = GeneratePlayers(nbPlayers);
             Round round = new Round(false, roundPlayers);
-            roundPlayers[0].MakeDealer();
+            _ps.MakeDealer(roundPlayers[0]);
 
             for (int i = 0; i < nbTimesPlayed; i++)
             {
