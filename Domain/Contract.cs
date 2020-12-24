@@ -2,9 +2,9 @@
 
 namespace TarotFr.Domain
 {
-    class Contract
+    public class Contract : IComparable
     {
-        enum Contracts
+        public enum Contracts
         {
             pass,
             small,
@@ -15,19 +15,19 @@ namespace TarotFr.Domain
             smallChelem,
             grandChelem
         }
-        /*
+        
         private Contracts _contract;
 
         public Contract(string contractName)
         {
-            if (String.IsNullOrEmpty(contractName))  _contract = Contracts.pass; 
+            if (string.IsNullOrEmpty(contractName))  _contract = Contracts.pass; 
             else _contract = (Contracts)Enum.Parse(typeof(Contracts), contractName, true);
         }
 
-        public Contract PickContract()
+        public Contract PickRandomly()
         {
             Random rnd = new Random();
-            return new Contract((string) Enum.GetValues(typeof(Contracts)).GetValue(rnd.Next(0, 6)));
+            return new Contract(Enum.GetValues(typeof(Contracts)).GetValue(rnd.Next(0, 8)).ToString());
         }
 
         public static bool operator >(Contract a, Contract b)
@@ -40,9 +40,37 @@ namespace TarotFr.Domain
             return a._contract < b._contract;
         }
 
+        public static bool operator ==(Contract a, Contract b)
+        {
+            return a._contract == b._contract;
+        }
+
+        public static bool operator !=(Contract a, Contract b)
+        {
+            return a._contract != b._contract;
+        }
+
+        public static bool operator <=(Contract a, Contract b)
+        {
+            return a._contract <= b._contract;
+        }
+
+        public static bool operator >=(Contract a, Contract b)
+        {
+            return a._contract >= b._contract;
+        }
+
+
         public string[] GetAll()
         {
             return Enum.GetNames(typeof(Contracts));            
-        }*/
+        }
+
+        public int CompareTo(object a)
+        {
+            if (this == (Contract) a) return 0;
+            if (this < (Contract) a) return -1;
+            return 1;
+        }
     }
 }

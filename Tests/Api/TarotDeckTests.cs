@@ -94,19 +94,19 @@ namespace TarotFrTests
             TarotDeck deck = new TarotDeck(false);
             List<Card> allCards = deck.Pop(DealingRules.MaxCardsInDeck).ToList();
 
-            Assert.AreEqual(14, allCards.Where(x => x.getColor() == "hearts").Count());
-            Assert.AreEqual(22, allCards.Where(x => x.getColor() == "trumpers").Count());
+            Assert.AreEqual(14, allCards.Where(x => x.getColorAsString() == "hearts").Count());
+            Assert.AreEqual(22, allCards.Where(x => x.getColorAsString() == "trumpers").Count());
             Assert.AreEqual(5, allCards.Where(x => x.Points() == 1).Count());
             Assert.AreEqual(78, allCards.Count());
         }
 
-        [Test] //how to make this test always successful ?
+        [Test] //how to make this test always successful (deterministic ?) ?
         public void TarotDeckIsShuffledInPlace()
         {
             TarotDeck unshuffledDeck = new TarotDeck(false);
             TarotDeck shuffledDeck = new TarotDeck(true);
 
-            Assert.AreNotEqual(unshuffledDeck.Pop().ToString(), shuffledDeck.Pop().ToString());
+            Assert.AreNotEqual(unshuffledDeck.Pop(), shuffledDeck.Pop());            
         }
 
         [TestCaseSource(nameof(TestCardLists))]

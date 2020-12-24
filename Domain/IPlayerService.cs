@@ -8,6 +8,6 @@ namespace TarotFr.Domain
         Player CreatePlayer(string name, bool isDealer, bool isAttacker);
         void MakeDealer(Player player);
         void DealsCards(IEnumerable<Card> cards, Player player);
-        Contract BetsContract();
+        void BetsContract(Player player);
     }
 }

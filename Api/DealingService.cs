@@ -33,6 +33,8 @@ namespace TarotFr.Api
                 _playerService.DealsCards(_deck.Pop(DealingRules.NbCardsToDeal), _table.NextPlayer());
                 _table.SendCardsToDog(PickCardsForDog(_deck, _table.CountDog()));                
             }
+
+            _table.ResetRoundNumber();
         }      
 
         private IEnumerable<Card> PickCardsForDog(TarotDeck tarotDeck, int dogCardsCount)

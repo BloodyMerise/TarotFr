@@ -47,7 +47,7 @@ namespace TarotFrTests
         [TestCaseSource(nameof(TestCards), new object[] { false, true })]
         public void CanCreateAllCards(Card card)
         {
-            Assert.DoesNotThrow(() => new Card(card.getColor(), card.Points()));
+            Assert.DoesNotThrow(() => new Card(card.getColorAsString(), card.Points()));
         }
 
         

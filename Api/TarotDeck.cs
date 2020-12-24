@@ -19,17 +19,21 @@ namespace TarotFr.Api
             _deck = new Stack<Card>();
             
             FillDeck();
-            if (shuffleCards) Shuffle();            
+            if (shuffleCards) Shuffle();
+            else Sort();
         }
 
-        private bool CheckScore(double expectedScore) { return _deck.Score() == expectedScore; }
+        private bool CheckScore(double expectedScore)
+        {
+            return _deck.Score() == expectedScore;
+        }
 
         private void FillDeck()
         {
             //Push all Basic cards
             for (int i = 1; i < 15; i++)
             {
-                foreach (Colors.CardColors color in Enum.GetValues(typeof(Colors.CardColors)))
+                foreach (Card.CardColors color in Enum.GetValues(typeof(Card.CardColors)))
                 {
                     _deck.Push(new Card(color.ToString(), i));
                 }
@@ -38,11 +42,11 @@ namespace TarotFr.Api
             //Push rest of Trumpers
             for (int i = 15; i < 22; i++)
             {
-                _deck.Push(new Card(Colors.CardColors.trumpers.ToString(), i));
+                _deck.Push(new Card(Card.CardColors.trumpers.ToString(), i));
             }
 
             //Push Excuse
-            _deck.Push(new Card(Colors.CardColors.trumpers.ToString(), 0));
+            _deck.Push(new Card(Card.CardColors.trumpers.ToString(), 0));
 
             //Check consistency
             if (_deck.Count != DealingRules.MaxCardsInDeck)
@@ -70,15 +74,28 @@ namespace TarotFr.Api
         // from https://stackoverflow.com/questions/33643104/shuffling-a-stackt
         public Stack<Card> Shuffle()
         {
-            var temp = _deck.ToArray();
+            var arrayDeck = _deck.ToArray();
             Random rnd = new Random();
 
             _deck.Clear();
-            foreach (Card value in temp.OrderBy(x => rnd.Next()))
+            foreach (Card value in arrayDeck.OrderBy(x => rnd.Next()))
             {
                 _deck.Push(value);
             }
 
+            return _deck;
+        }
+
+        private Stack<Card> Sort()
+        {
+            var temp = _deck.ToArray();
+            _deck.Clear();
+
+            foreach(Card card in temp.OrderBy(x => (int) x.Color))
+            {
+                _deck.Push(card);
+            }
+                        
             return _deck;
         }
     }

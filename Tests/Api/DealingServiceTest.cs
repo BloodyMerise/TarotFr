@@ -28,7 +28,7 @@ namespace TarotFrTests
         [TestCase(3)]
         [TestCase(4)]
         [TestCase(5)]
-        public void AlwaysDealsCorrectly(int nbPlayers)
+        public void CheckNbCardsInPlayersHandsAndDogIsCorrect(int nbPlayers)
         {
             List<Player> players = Musketeers(nbPlayers);               
             TarotTable tarotTable = new TarotTable(true, true, players);
@@ -49,6 +49,21 @@ namespace TarotFrTests
 
             Assert.AreEqual(DealingRules.MaxCardsInDeck, totalCardsInHand + tarotTable.CountDog()); //all cards are dealt
             Assert.AreEqual(rules.DogMaxCards(nbPlayers), tarotTable.CountDog()); //dog has expected number of cards
+        }
+
+        [Test]
+        public void AfterDealingRoundNumberIsZero()
+        {
+            List<Player> players = Musketeers(5);
+            TarotTable tarotTable = new TarotTable(true, true, players);
+            DealingService dealingService = new DealingService(tarotTable);
+            PlayerService playerService = new PlayerService();
+            DealingRules rules = new DealingRules();
+            
+            playerService.MakeDealer(players.First());
+            dealingService.DealsAllCardsFromDeck();
+
+            Assert.That(tarotTable.GetRoundNumber() == 0);
         }
     }
 }

@@ -18,6 +18,8 @@ namespace TarotFr.Api
 
         public int CountDog() => _dog.Count;
         public int NbPlayers() => _round.GetNbPlayers();
+        public int GetRoundNumber() => _round.RoundNumber;
+        public void ResetRoundNumber() => _round.ResetRoundNumber();
         public void SendCardsToDog(IEnumerable<Card> cards) { if(!(cards is null)) _dog.AddRange(cards); }
         
         public Player NextPlayer(Player player)
@@ -28,11 +30,6 @@ namespace TarotFr.Api
         public Player NextPlayer()
         {
             return _round.NextPlayer();
-        }
-
-        public Player AuctionWinner()
-        {
-            return new Player();
         }
 
         public Player GetDealer()

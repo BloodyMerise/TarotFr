@@ -4,7 +4,7 @@ namespace TarotFr.Domain
 {
     public class Player
     {
-        Contract _contract;
+        public Contract Contract { get; set; }
         public string Name;
         public bool Dealer { get; set; }
         public bool Attacker { get; set; }

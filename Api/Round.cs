@@ -28,11 +28,22 @@ namespace TarotFr.Api
             if (players is null) throw new ArgumentOutOfRangeException("Players cannot be null for new round");
             this.players = players;            
         }
-                       
+
+        internal void ResetRoundNumber()
+        {
+            _nbTimesPlayed = 0;
+        }
+
         public Player NextPlayer(Player player)
-        {           
-            int indexPlayer = players.IndexOf(player);
+        {   
+            if(player is null)
+            {
+                if (_currentPlayer is null) SetCurrentPlayer(player: FindDealer());
+            }
+
+            int indexPlayer = players.IndexOf(_currentPlayer);
             _nbTimesPlayed++;
+
             return _rotateLeft ? NextOrFirstLeft(indexPlayer) : NextOrFirstRight(indexPlayer);
         }
 
@@ -43,19 +54,15 @@ namespace TarotFr.Api
 
         public Player NextPlayer()
         {
-            if (_currentPlayer is null) SetCurrentPlayer(player: FindDealer());
-            int indexCurrentPlayer = players.IndexOf(_currentPlayer);
-
-            _nbTimesPlayed++;
-            return _rotateLeft ? NextOrFirstLeft(indexCurrentPlayer) : NextOrFirstRight(indexCurrentPlayer);
+            return NextPlayer(null);
         }
 
         private Player NextOrFirstRight(int playerIndex)
         {
             if (playerIndex - 1 < 0)
             {
-                SetCurrentPlayer(players[players.Count - 1]);
-                return players[players.Count - 1];
+                SetCurrentPlayer(players.Last());
+                return players.Last();
             }
             else
             {
@@ -68,8 +75,8 @@ namespace TarotFr.Api
         {
             if (playerIndex + 1 >= players.Count)
             {
-                SetCurrentPlayer(players[0]);
-                return players[0];
+                SetCurrentPlayer(players.First());
+                return players.First();
             }
             else
             {

@@ -10,10 +10,10 @@ namespace TarotFrTests
         PlayerService _ps = new PlayerService();
 
         [TestCase(3,3)]
-        [TestCase(-1,0)]
         [TestCase(0,0)]
         [TestCase(78,78)]
-        [TestCase(99,78)]
+        [TestCase(int.MaxValue, 78)]
+        [TestCase(int.MinValue, 0)]
         public void CannotDealInvalidNbCards(int nbcards, int expectedNbCards)
         {
             Player raoul = _ps.CreatePlayer("Raoul",false,false);

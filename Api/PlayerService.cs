@@ -21,7 +21,8 @@ namespace TarotFr.Api
                 Attacker = isAttacker,
                 Dealer = isDealer,
                 Name = name,
-                Hand = new List<object>()
+                Hand = new List<object>(),
+                Contract = new Contract("pass")
             };
         }
 
@@ -35,9 +36,10 @@ namespace TarotFr.Api
             return allPlayers;
         }
 
-        Contract IPlayerService.BetsContract()
+        void IPlayerService.BetsContract(Player player)
         {
-            throw new NotImplementedException();
+            Contract contract = new Contract(null);
+            player.Contract = contract.PickRandomly();            
         }
 
         public void MakeDealer(Player player)

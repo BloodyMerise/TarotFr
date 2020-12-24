@@ -51,5 +51,26 @@ namespace TarotFr.Tests
 
             Assert.AreNotEqual(tableLeft.NextPlayer().Name, tableRight.NextPlayer().Name);
         }
+
+        [TestCase(3)]
+        [TestCase(4)]
+        [TestCase(5)]
+        public void RoundNumberIsCorrect(int nbPlayers)
+        {
+            TarotTable tb = CreateTable(nbPlayers, false, true);
+            int n = 0;
+            
+            while(n < nbPlayers)
+            {
+                Assert.That(tb.GetRoundNumber() == n);
+
+                for(int i = 0; i < nbPlayers; i++)
+                {
+                    tb.NextPlayer();
+                }
+
+                n++;
+            }                        
+        }
     }
 }
