@@ -30,7 +30,7 @@ namespace TarotFrTests
         [TestCase(5)]
         public void CheckNbCardsInPlayersHandsAndDogIsCorrect(int nbPlayers)
         {
-            List<Player> players = Musketeers(nbPlayers);               
+            List<Player> players = Musketeers(nbPlayers);
             TarotTable tarotTable = new TarotTable(true, true, players);
             DealingService dealingService = new DealingService(tarotTable);
             PlayerService playerService = new PlayerService();
@@ -42,7 +42,7 @@ namespace TarotFrTests
 
             foreach (Player player in players)
             {
-                totalCardsInHand += playerService.CountCardsInHand(player);                
+                totalCardsInHand += playerService.CountCardsInHand(player);
                 Assert.AreEqual(players[0].Hand.Count(), player.Hand.Count()); //all players have same nb cards
                 Assert.IsNull(player.WonHands); //no player has a dog
             }

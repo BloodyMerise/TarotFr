@@ -6,7 +6,7 @@ using TarotFr.Infrastructure;
 namespace TarotFr.Api
 {
     public class DealingService : IDealingService
-    {                
+    {
         DealingRules _rules;
         TarotTable _table;
         TarotDeck _deck;
@@ -50,7 +50,7 @@ namespace TarotFr.Api
             }
             else return null;
         }
-               
+
         bool IDealingService.CheckPlayersHaveSameNbCardsInHand()
         {
             throw new NotImplementedException();

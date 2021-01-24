@@ -36,10 +36,9 @@ namespace TarotFr.Api
             return allPlayers;
         }
 
-        void IPlayerService.BetsContract(Player player)
+        public Contract AskForBet(Player player, List<Contract> choices)
         {
-            Contract contract = new Contract(null);
-            player.Contract = contract.PickRandomly();            
+           return player.Contract.PickRandomly(choices);            
         }
 
         public void MakeDealer(Player player)

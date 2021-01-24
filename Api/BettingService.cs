@@ -18,39 +18,59 @@ namespace TarotFr.Api
         private void RegisterBets(Player player, Contract contract)
         {
             _bets.Add(player, contract);
+            player.Contract = contract;
         }
 
         public void GatherBets(TarotTable table)
         {
+            var availableBets = AvailableBets();
+            var ps = new PlayerService();
+
             while (table.GetRoundNumber() == 0)
             {
                 Player nextPlayer = table.NextPlayer();
-                RegisterBets(nextPlayer, nextPlayer.Contract.PickRandomly());
+                Contract bet = ps.AskForBet(nextPlayer, availableBets);
+                RegisterBets(nextPlayer, bet);
             }
+
+            return;
+        }
+
+        public void SetBetWinnerAsAttacker()
+        {
+            var winningBet = GetWinningBet();
+            winningBet.Key.Attacker = true;
+
             return;
         }
 
         public List<Contract> AvailableBets()
         {
             List<Contract> availableContracts = new List<Contract>() { new Contract("pass") };
-            List<Contract> allContracts = new List<Contract>();
+            List<Contract> allContracts = ListAllContracts();
 
-            foreach(var contract in Enum.GetValues(typeof(Contract.Contracts)))
-            {
-                allContracts.Add(new Contract(contract.ToString()));
-            }
-
-            var highestBet = GetWinningBet();
-            availableContracts.AddRange(allContracts.Where(x => x > highestBet.Value));
+            Contract highestContractBet = _bets.Count == 0 ? new Contract("pass") : _bets.Values.Max();
+            availableContracts.AddRange(allContracts.Where(x => x > highestContractBet));
 
             return availableContracts;
         }
 
+        private List<Contract> ListAllContracts()
+        {
+            List<Contract> allContracts = new List<Contract>();
+            foreach (string contract in new Contract(null).GetAll())
+            {
+                allContracts.Add(new Contract(contract));
+            }
+
+            return allContracts;
+        }
+
         public KeyValuePair<Player, Contract> GetWinningBet()
         {
-            if(_bets is null || _bets.Count == 0)
+            if (_bets is null || _bets.Count == 0)
             {
-                return new KeyValuePair<Player, Contract>(null, new Contract("pass"));
+                throw new ArgumentNullException("bet", "No bet has been registered yet");
             }
 
             Contract winningBet = _bets.Values.Max();

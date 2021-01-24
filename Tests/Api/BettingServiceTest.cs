@@ -1,10 +1,8 @@
 ﻿using TarotFr.Api;
-using TarotFr.Infrastructure;
 using TarotFr.Domain;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace TarotFrTests.Api
 {
@@ -32,7 +30,7 @@ namespace TarotFrTests.Api
         {
             List<Contract> allContracts = new List<Contract>();
 
-            foreach (var contract in Enum.GetValues(typeof(Contract.Contracts)))
+            foreach (var contract in new Contract(null).GetAll())
             {
                 allContracts.Add(new Contract(contract.ToString()));
             }
@@ -42,7 +40,7 @@ namespace TarotFrTests.Api
         [TestCase(3)]
         [TestCase(4)]
         [TestCase(5)]
-        public void RegisteredBetsForAllPlayers(int nbPlayers)
+        public void RegisteredBetsMatchForAllPlayers(int nbPlayers)
         {
             List<Player> players = Musketeers(nbPlayers);
             TarotTable tb = new TarotTable(false, false, players);
@@ -62,28 +60,42 @@ namespace TarotFrTests.Api
         [Test]
         public void ListAvailableContracts()
         {
-            List<Player> players = Musketeers(3);
+            List<Player> players = Musketeers(5);
             TarotTable tb = new TarotTable(false, false, players);
             BettingService bs = new BettingService(tb);
             List<Contract> allContracts = AllContracts();
-                                
-            var availableBets = bs.AvailableBets();
-            Assert.That(availableBets.Count == allContracts.Count);
 
-            bs.GatherBets(tb);            
+            var availableBets = bs.AvailableBets();
+            CollectionAssert.AreEquivalent(availableBets.Select(x => x.ToString()), allContracts.Select(x => x.ToString()));
+
+            bs.GatherBets(tb);
             availableBets = bs.AvailableBets();
             var winningBet = bs.GetWinningBet();
-            List<Contract> onlyGreatersPlusPass = allContracts.Where(x => x > winningBet.Value).ToList();
+            var onlyGreatersPlusPass = allContracts.Where(x => x > winningBet.Value).Select(x => x.ToString()).ToList();
 
             if (winningBet.Value.ToString() != "pass")
             {
-                onlyGreatersPlusPass.Add(new Contract("pass"));
+                onlyGreatersPlusPass.Add(new Contract("pass").ToString());
             }
 
-            //fails (differnt HashCode)
+            //fails (different HashCode)
             //CollectionAssert.AreEquivalent(onlyGreatersPlusPass,availableBets);
 
-            CollectionAssert.AreEquivalent(onlyGreatersPlusPass.Select(x => x.ToString()),availableBets.Select(x => x.ToString()));
-        }               
+            CollectionAssert.AreEquivalent(onlyGreatersPlusPass,availableBets.Select(x => x.ToString()));
+        }
+
+        [Test]
+        public void PlayerWithWinningContractIsAttacker()
+        {
+            List<Player> players = Musketeers(5);
+            TarotTable tb = new TarotTable(false, false, players);
+            BettingService bs = new BettingService(tb);
+
+            bs.GatherBets(tb);
+            var bet = bs.GetWinningBet();
+            bs.SetBetWinnerAsAttacker();
+
+            Assert.True(bet.Key.Attacker);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TarotFr.Domain
 {
@@ -24,10 +25,10 @@ namespace TarotFr.Domain
             else _contract = (Contracts)Enum.Parse(typeof(Contracts), contractName, true);
         }
 
-        public Contract PickRandomly()
+        public Contract PickRandomly(List<Contract> availableContracts)
         {
             Random rnd = new Random();
-            return new Contract(Enum.GetValues(typeof(Contracts)).GetValue(rnd.Next(0, 8)).ToString());
+            return availableContracts[rnd.Next(availableContracts.Count)];
         }
 
         public static bool operator >(Contract a, Contract b)
@@ -71,6 +72,11 @@ namespace TarotFr.Domain
             if (this == (Contract) a) return 0;
             if (this < (Contract) a) return -1;
             return 1;
+        }
+
+        public override string ToString()
+        {
+            return _contract.ToString();
         }
     }
 }

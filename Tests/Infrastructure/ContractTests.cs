@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using TarotFr.Domain;
 
 namespace TarotFrTests
@@ -11,7 +12,14 @@ namespace TarotFrTests
         public void PickContractReturnsContract()
         {
             Contract contractTest = new Contract(null);
-            Assert.That(contractTest.PickRandomly(), Is.TypeOf(typeof(Contract)));
+            List<Contract> choices = new List<Contract>()
+            {
+                new Contract("pass"),
+                new Contract("Guard"),
+                new Contract("GuardAgainst")
+            };
+
+            Assert.That(choices.Contains(contractTest.PickRandomly(choices)));
         }
 
         [Test]

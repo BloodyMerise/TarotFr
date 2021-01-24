@@ -25,12 +25,6 @@ namespace TarotFrTests
             _ps.DealsCards(dek.Pop(nbcards), georgette);
 
             Assert.AreEqual(expectedNbCards, georgette.Hand.Count());
-        }
-        
-        [Test]
-        public void PlayerWithWinningContractIsAttacker()
-        {
-            Assert.Fail();
-        }
+        }        
     }
 }
