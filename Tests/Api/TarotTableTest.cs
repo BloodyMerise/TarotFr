@@ -95,6 +95,7 @@ namespace TarotFr.Tests
             }            
         }
         
+        [Test]
         public void AsideCannotContainForbiddenCards()
         {
             PlayerService ps = new PlayerService();
