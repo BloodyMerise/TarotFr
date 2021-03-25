@@ -61,7 +61,6 @@ namespace TarotFr.Domain
             return a._contract >= b._contract;
         }
 
-
         public string[] GetAll()
         {
             return Enum.GetNames(typeof(Contracts));            

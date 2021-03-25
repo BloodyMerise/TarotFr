@@ -8,8 +8,8 @@ namespace TarotFr.Domain
         public const int MaxCardsInDeck = 78;
         public const int NbCardsToDeal = 3;
         public int[] PossibleNbPlayers = new int[] { 3, 4, 5 };
-
-        public int DogMaxCards(int nbPlayers)
+        
+        public int AsideMaxCards(int nbPlayers)
         {
             switch (nbPlayers)
             {
@@ -21,6 +21,14 @@ namespace TarotFr.Domain
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        public bool CardAllowedInAside(bool trumper, bool oudler, int rank)
+        {
+            if (trumper) return false;
+            if (oudler) return false;
+            if (rank == 14) return false;
+            return true;
         }
     }
 }

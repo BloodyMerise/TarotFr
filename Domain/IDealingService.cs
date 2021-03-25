@@ -3,7 +3,7 @@
     interface IDealingService
     {
         bool NoMoreCardsInDeckAfterDealing();        
-        bool CheckDog();
+        bool CheckAside();
         bool CheckPlayersHaveSameNbCardsInHand();
         bool TableHasDealer();
     }

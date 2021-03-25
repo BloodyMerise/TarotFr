@@ -85,14 +85,12 @@ namespace TarotFrTests
             Round round = new Round(true, roundPlayers);
 
             _ps.MakeDealer(roundPlayers[dealerPosition]);
-
-            //for (int i = dealerPosition - 1; i >= 0 ; i--)
+            
             for (int i = dealerPosition + 1; i < nbPlayers; i++)
             {
                 Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);
             }
 
-            //for (int i = nbPlayers -1; i > dealerPosition - 1; i--)
             for (int i = 0; i < dealerPosition + 1; i++)
             {
                 Assert.AreEqual(roundPlayers[i].Name, round.NextPlayer().Name);

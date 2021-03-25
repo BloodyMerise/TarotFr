@@ -3,6 +3,8 @@ using TarotFr.Api;
 using TarotFr.Domain;
 using System.Linq;
 using System.Collections.Generic;
+using TarotFr.Infrastructure;
+using System;
 
 namespace TarotFr.Tests
 {
@@ -71,6 +73,42 @@ namespace TarotFr.Tests
 
                 n++;
             }                        
+        }
+
+        [TestCase(3)]
+        [TestCase(4)]
+        [TestCase(5)]
+        public void SendAsideToWinnerMakesPlayerHaveMoreCardThanOthers(int nbPlayers)
+        {
+            TarotTable tb = CreateTable(nbPlayers, false, true);
+            DealingService ds = new DealingService(tb);
+            ds.DealsAllCardsFromDeck();
+            Player attacker = tb.NextPlayer();
+            attacker.Attacker = true;
+
+            tb.SendAsideToPlayerHand(attacker);
+
+            while(tb.GetRoundNumber() == 0)
+            {
+                Player player = tb.NextPlayer();
+                Assert.That(attacker.Hand.Count, Is.GreaterThan(player.Hand.Count));
+            }            
+        }
+        
+        public void AsideCannotContainForbiddenCards()
+        {
+            PlayerService ps = new PlayerService();
+            Player player = ps.CreatePlayer("asda", false, true);
+            List<object> cards = new List<object>
+            {
+               new Card("trumpers", 3) as object,
+                new Card("trumpers", 21) as object,
+                new Card("clubs", 14) as object,
+                new Card("diamonds", 14) as object
+            };
+
+            player.Hand = cards;            
+            Assert.Throws<NotSupportedException>(() => ps.MakeAside(player, 4));
         }
     }
 }

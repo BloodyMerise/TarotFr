@@ -13,7 +13,7 @@ namespace TarotFr.Api
         PlayerService _playerService = new PlayerService();
         int _nbPlayers;
 
-        public bool CheckDog() => _table.CountDog() == _rules.DogMaxCards(_nbPlayers);
+        public bool CheckAside() => _table.CountAside() == _rules.AsideMaxCards(_nbPlayers);
         bool IDealingService.NoMoreCardsInDeckAfterDealing() => _deck.IsEmpty() && _playerService.CountCardsInHand(_table.NextPlayer()) > 0;
 
         public DealingService(TarotTable table)
@@ -31,22 +31,22 @@ namespace TarotFr.Api
             while (!_deck.IsEmpty())
             {
                 _playerService.DealsCards(_deck.Pop(DealingRules.NbCardsToDeal), _table.NextPlayer());
-                _table.SendCardsToDog(PickCardsForDog(_deck, _table.CountDog()));                
+                _table.SendCardsToAside(PickCardsForAside(_deck, _table.CountAside()));                
             }
 
             _table.ResetRoundNumber();
         }      
 
-        private IEnumerable<Card> PickCardsForDog(TarotDeck tarotDeck, int dogCardsCount)
+        private IEnumerable<Card> PickCardsForAside(TarotDeck tarotDeck, int asideCardsCount)
         {            
-            int nbRemainingCardsForDog = _rules.DogMaxCards(_nbPlayers) - dogCardsCount;           
+            int nbRemainingCardsForAside = _rules.AsideMaxCards(_nbPlayers) - asideCardsCount;           
 
-            if (nbRemainingCardsForDog > 0)
+            if (nbRemainingCardsForAside > 0)
             {
                 Random rnd = new Random();
                 int rndNbCardsToSend = rnd.Next(1, DealingRules.NbCardsToDeal) + 1;
 
-                return tarotDeck.Pop(Math.Min(rndNbCardsToSend, nbRemainingCardsForDog));
+                return tarotDeck.Pop(Math.Min(rndNbCardsToSend, nbRemainingCardsForAside));
             }
             else return null;
         }

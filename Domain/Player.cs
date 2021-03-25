@@ -9,6 +9,6 @@ namespace TarotFr.Domain
         public bool Dealer { get; set; }
         public bool Attacker { get; set; }
         public List<object> Hand { get; set; }
-        public IEnumerable<object> WonHands { get; set; }
+        public List<object> WonHands { get; set; }
     }
 }

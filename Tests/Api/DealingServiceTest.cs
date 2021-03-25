@@ -28,7 +28,7 @@ namespace TarotFrTests
         [TestCase(3)]
         [TestCase(4)]
         [TestCase(5)]
-        public void CheckNbCardsInPlayersHandsAndDogIsCorrect(int nbPlayers)
+        public void CheckNbCardsInPlayersHandsAndAsideIsCorrect(int nbPlayers)
         {
             List<Player> players = Musketeers(nbPlayers);
             TarotTable tarotTable = new TarotTable(true, true, players);
@@ -44,11 +44,11 @@ namespace TarotFrTests
             {
                 totalCardsInHand += playerService.CountCardsInHand(player);
                 Assert.AreEqual(players[0].Hand.Count(), player.Hand.Count()); //all players have same nb cards
-                Assert.IsNull(player.WonHands); //no player has a dog
+                Assert.IsNull(player.WonHands); //no player has a aside
             }
 
-            Assert.AreEqual(DealingRules.MaxCardsInDeck, totalCardsInHand + tarotTable.CountDog()); //all cards are dealt
-            Assert.AreEqual(rules.DogMaxCards(nbPlayers), tarotTable.CountDog()); //dog has expected number of cards
+            Assert.AreEqual(DealingRules.MaxCardsInDeck, totalCardsInHand + tarotTable.CountAside()); //all cards are dealt
+            Assert.AreEqual(rules.AsideMaxCards(nbPlayers), tarotTable.CountAside()); //aside has expected number of cards
         }
 
         [Test]

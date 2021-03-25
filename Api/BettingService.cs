@@ -9,6 +9,7 @@ namespace TarotFr.Api
     {
         private Dictionary<Player, Contract> _bets;
         public Dictionary<Player, Contract> RegisteredBets() => _bets;
+        private PlayerService _ps = new PlayerService();
 
         public BettingService(TarotTable table)
         {
@@ -24,14 +25,15 @@ namespace TarotFr.Api
         public void GatherBets(TarotTable table)
         {
             var availableBets = AvailableBets();
-            var ps = new PlayerService();
-
+            
             while (table.GetRoundNumber() == 0)
             {
                 Player nextPlayer = table.NextPlayer();
-                Contract bet = ps.AskForBet(nextPlayer, availableBets);
+                Contract bet = _ps.AskForBet(nextPlayer, availableBets);
                 RegisterBets(nextPlayer, bet);
             }
+
+            table.ResetRoundNumber();
 
             return;
         }

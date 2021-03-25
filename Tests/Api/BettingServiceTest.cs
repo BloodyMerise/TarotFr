@@ -58,6 +58,18 @@ namespace TarotFrTests.Api
         }
 
         [Test]
+        public void RoundIsZeroAfterGatherBets()
+        {
+            List<Player> players = Musketeers(3);
+            TarotTable tb = new TarotTable(false, false, players);
+            BettingService bs = new BettingService(tb);
+
+            bs.GatherBets(tb);
+
+            Assert.Zero(tb.GetRoundNumber());
+        }
+
+        [Test]
         public void ListAvailableContracts()
         {
             List<Player> players = Musketeers(5);
