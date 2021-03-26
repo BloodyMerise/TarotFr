@@ -3,6 +3,8 @@ using System.Linq;
 using NUnit.Framework;
 using TarotFr.Domain;
 using TarotFr.Api;
+using TarotFr.Infrastructure;
+using System;
 
 namespace TarotFrTests
 {
@@ -64,6 +66,58 @@ namespace TarotFrTests
             dealingService.DealsAllCardsFromDeck();
 
             Assert.That(tarotTable.GetRoundNumber() == 0);
+        }
+
+        [Test]
+        public void FivePlayersAttackerCanCallHimself()
+        {
+            List<Player> players = Musketeers(5);
+            TarotTable tarotTable = new TarotTable(true, true, players);
+            DealingService dealingService = new DealingService(tarotTable);
+            PlayerService playerService = new PlayerService();
+            var kings = new List<object> {
+                new Card("hearts",14),
+                new Card("diamonds",14),
+                new Card("clubs",14),
+                new Card("spades",14)
+            };
+            var attacker = players.First();
+            attacker.Attacker = true;
+            attacker.Hand.AddRange(kings);
+            playerService.MakeDealer(attacker);            
+
+            var calledPlayer = dealingService.AttackerCallsKing(attacker);
+
+            Assert.That(calledPlayer.Name, Is.EqualTo(attacker.Name));
+        }
+
+        [Test]
+        public void FivePlayersOnlyAttackerCanCallKing()
+        {
+            List<Player> players = Musketeers(5);
+            TarotTable tarotTable = new TarotTable(true, true, players);
+            DealingService dealingService = new DealingService(tarotTable);
+
+            var defender = players.First();
+            defender.Attacker = false;
+            defender.Dealer = true;
+
+            Assert.Throws<ArgumentException>(() => dealingService.AttackerCallsKing(defender));
+        }
+
+        [Test]
+        public void FivePlayersCalledKingInAsideOneAttacker()
+        {
+            List<Player> players = Musketeers(5);
+            TarotTable tarotTable = new TarotTable(true, true, players);
+            DealingService dealingService = new DealingService(tarotTable);
+            PlayerService playerService = new PlayerService();
+            DealingRules rules = new DealingRules();
+
+            players.First().Dealer = true;
+            players.First().Attacker = true;
+
+            Assert.Fail("Use Mock you fool");
         }
     }
 }

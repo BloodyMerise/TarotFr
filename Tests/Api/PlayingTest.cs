@@ -59,6 +59,12 @@ namespace TarotFrTests.Api
 
             Assert.That(attacker.Hand.Count, Is.EqualTo(players.FirstOrDefault(x => x.Attacker is false).Hand.Count));            
             Assert.That(attacker.WonHands.Count, Is.EqualTo(dr.AsideMaxCards(nbPlayers)));
+
+            if(nbPlayers == 5)
+            {
+                ds.AttackerCallsKing(attacker);                
+            }
+            
         }
     }
 }
