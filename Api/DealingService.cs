@@ -9,38 +9,44 @@ namespace TarotFr.Api
     public class DealingService : IDealingService
     {
         DealingRules _rules;
-        TarotTable _tb;
         TarotDeck _deck;
-        PlayerService _ps = new PlayerService();
-        int _nbPlayers;
+        PlayerService _ps;
+        List<Card> _aside;
+        private Round _round;
 
-        public bool CheckAside() => _tb.CountAside() == _rules.AsideMaxCards(_nbPlayers);
-        bool IDealingService.NoMoreCardsInDeckAfterDealing() => _deck.IsEmpty() && _ps.CountCardsInHand(_tb.NextPlayer()) > 0;
+        public int NbPlayers() => _round.GetNbPlayers();
+        public int GetRoundNumber() => _round.RoundNumber;
+        public void ResetRoundNumber() => _round.ResetRoundNumber();
 
-        public DealingService(TarotTable table)
+        public int CountAside() => _aside.Count;
+        public bool CheckAside() => CountAside() == _rules.AsideMaxCards(NbPlayers());
+        bool IDealingService.NoMoreCardsInDeckAfterDealing() => _deck.IsEmpty() && _ps.CountCardsInHand(NextPlayer()) > 0;
+        
+        public DealingService(bool startsFromLeft, List<Player> players)
         {
-            _rules = new DealingRules();
+            _ps = new PlayerService();
             _deck = new TarotDeck(true);
-            _tb = table;
-            _nbPlayers = _tb.NbPlayers();
+            _rules = new DealingRules();            
+            _aside = new List<Card>();
+            _round = new Round(startsFromLeft, players);
         }
         
         public void DealsAllCardsFromDeck()
         {
-            Player dealer = _tb.GetDealer();            
+            Player dealer = GetDealer();            
                         
             while (!_deck.IsEmpty())
             {
-                _ps.DealsCards(_deck.Pop(DealingRules.NbCardsToDeal), _tb.NextPlayer());
-                _tb.SendCardsToAside(PickCardsForAside(_deck, _tb.CountAside()));                
+                _ps.DealsCards(_deck.Pop(DealingRules.NbCardsToDeal), NextPlayer());
+                SendCardsToAside(PickCardsForAside(_deck, CountAside()));                
             }
 
-            _tb.ResetRoundNumber();
+            ResetRoundNumber();
         }      
 
         private IEnumerable<Card> PickCardsForAside(TarotDeck tarotDeck, int asideCardsCount)
         {            
-            int nbRemainingCardsForAside = _rules.AsideMaxCards(_nbPlayers) - asideCardsCount;           
+            int nbRemainingCardsForAside = _rules.AsideMaxCards(NbPlayers()) - asideCardsCount;           
 
             if (nbRemainingCardsForAside > 0)
             {
@@ -57,11 +63,16 @@ namespace TarotFr.Api
             throw new NotImplementedException();
         }
 
+        public void SendCardsToAside(IEnumerable<object> cards)
+        {
+            if (!(cards is null)) _aside.AddRange(cards as IEnumerable<Card>);
+        }
+
         public bool TableHasDealer()
         {
             try
             {
-                _tb.GetDealer();
+                GetDealer();
             }
             catch (NullReferenceException noDealer)
             {                
@@ -69,9 +80,20 @@ namespace TarotFr.Api
             }
             return true;
         }
+        
+        public void SendAsideToPlayerHand(Player player)
+        {
+            player.Hand.AddRange(_aside);
+            _aside.Clear();
+        }
 
         public Player AttackerCallsKing(Player player)
         {
+            if(NbPlayers() != 5)
+            {
+                throw new ArgumentException("Can only call a king with 5 players");
+            }
+        
             if (player.Attacker is false)
             {
                 throw new ArgumentException("Only an attacker can call a king");
@@ -86,19 +108,34 @@ namespace TarotFr.Api
 
             var calledKing = _ps.AskPlayerCard(player, kings, 1).FirstOrDefault();
 
-            while(_tb.GetRoundNumber() == 0)
+            while(GetRoundNumber() == 0)
             {
-                var nextPlayer = _tb.NextPlayer();
+                var nextPlayer = NextPlayer();
                 if (nextPlayer.Hand.Contains(calledKing as object))
                 {
-                    _tb.ResetRoundNumber();
+                    ResetRoundNumber();
                     return nextPlayer;
                 }
             }
-            _tb.ResetRoundNumber();
+            ResetRoundNumber();
 
             //King is in aside (maybe more defensive programming here?)
             return player;            
+        }
+
+        public Player NextPlayer(Player player)
+        {
+            return _round.NextPlayer(player);
+        }
+
+        public Player NextPlayer()
+        {
+            return _round.NextPlayer();
+        }
+
+        public Player GetDealer()
+        {
+            return _round.FindDealer();
         }
     }
 }

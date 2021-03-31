@@ -5,6 +5,7 @@ using TarotFr.Domain;
 using TarotFr.Api;
 using TarotFr.Infrastructure;
 using System;
+using Moq;
 
 namespace TarotFrTests
 {
@@ -27,14 +28,20 @@ namespace TarotFrTests
             return players as List<Player>;
         }
 
+        private IEnumerable<object> Kings() => new List<object> {
+                new Card("hearts",14),
+                new Card("diamonds",14),
+                new Card("clubs",14),
+                new Card("spades",14)
+            };
+
         [TestCase(3)]
         [TestCase(4)]
         [TestCase(5)]
         public void CheckNbCardsInPlayersHandsAndAsideIsCorrect(int nbPlayers)
         {
-            List<Player> players = Musketeers(nbPlayers);
-            TarotTable tarotTable = new TarotTable(true, true, players);
-            DealingService dealingService = new DealingService(tarotTable);
+            List<Player> players = Musketeers(nbPlayers);            
+            DealingService dealingService = new DealingService(true,players);
             PlayerService playerService = new PlayerService();
             DealingRules rules = new DealingRules();
 
@@ -46,44 +53,76 @@ namespace TarotFrTests
             {
                 totalCardsInHand += playerService.CountCardsInHand(player);
                 Assert.AreEqual(players[0].Hand.Count(), player.Hand.Count()); //all players have same nb cards
-                Assert.IsNull(player.WonHands); //no player has a aside
+                Assert.IsNull(player.WonHands); //no player has an aside
             }
 
-            Assert.AreEqual(DealingRules.MaxCardsInDeck, totalCardsInHand + tarotTable.CountAside()); //all cards are dealt
-            Assert.AreEqual(rules.AsideMaxCards(nbPlayers), tarotTable.CountAside()); //aside has expected number of cards
+            Assert.AreEqual(DealingRules.MaxCardsInDeck, totalCardsInHand + dealingService.CountAside()); //all cards are dealt
+            Assert.AreEqual(rules.AsideMaxCards(nbPlayers), dealingService.CountAside()); //aside has expected number of cards
         }
 
         [Test]
         public void AfterDealingRoundNumberIsZero()
         {
-            List<Player> players = Musketeers(5);
-            TarotTable tarotTable = new TarotTable(true, true, players);
-            DealingService dealingService = new DealingService(tarotTable);
+            List<Player> players = Musketeers(5);            
+            DealingService dealingService = new DealingService(true, players);
             PlayerService playerService = new PlayerService();
             DealingRules rules = new DealingRules();
             
             playerService.MakeDealer(players.First());
             dealingService.DealsAllCardsFromDeck();
 
-            Assert.That(tarotTable.GetRoundNumber() == 0);
+            Assert.That(dealingService.GetRoundNumber() == 0);
+        }
+
+        [TestCase(3)]
+        [TestCase(4)]
+        [TestCase(5)]
+        public void SendAsideToWinnerMakesPlayerHaveMoreCardThanOthers(int nbPlayers)
+        {
+            var players = Musketeers(nbPlayers);
+            players.First().Dealer = true;
+            DealingService ds = new DealingService(true, players);
+            ds.DealsAllCardsFromDeck();
+            Player attacker = ds.NextPlayer();
+            attacker.Attacker = true;
+
+            ds.SendAsideToPlayerHand(attacker);
+
+            while (ds.GetRoundNumber() == 0)
+            {
+                Player player = ds.NextPlayer();
+                Assert.That(attacker.Hand.Count, Is.GreaterThan(player.Hand.Count));
+            }
+        }
+
+        [Test]
+        public void AsideCannotContainForbiddenCards()
+        {
+            PlayerService ps = new PlayerService();
+            Player player = ps.CreatePlayer("asda", false, true);
+            List<object> cards = new List<object>
+            {
+               new Card("trumpers", 3) as object,
+                new Card("trumpers", 21) as object,
+                new Card("clubs", 14) as object,
+                new Card("diamonds", 14) as object
+            };
+
+            player.Hand = cards;
+            Assert.Throws<NotSupportedException>(() => ps.MakeAside(player, 4));
         }
 
         [Test]
         public void FivePlayersAttackerCanCallHimself()
         {
             List<Player> players = Musketeers(5);
-            TarotTable tarotTable = new TarotTable(true, true, players);
-            DealingService dealingService = new DealingService(tarotTable);
+            
+            DealingService dealingService = new DealingService(true, players);
             PlayerService playerService = new PlayerService();
-            var kings = new List<object> {
-                new Card("hearts",14),
-                new Card("diamonds",14),
-                new Card("clubs",14),
-                new Card("spades",14)
-            };
+            
             var attacker = players.First();
             attacker.Attacker = true;
-            attacker.Hand.AddRange(kings);
+            attacker.Hand.AddRange(Kings());
             playerService.MakeDealer(attacker);            
 
             var calledPlayer = dealingService.AttackerCallsKing(attacker);
@@ -94,9 +133,8 @@ namespace TarotFrTests
         [Test]
         public void FivePlayersOnlyAttackerCanCallKing()
         {
-            List<Player> players = Musketeers(5);
-            TarotTable tarotTable = new TarotTable(true, true, players);
-            DealingService dealingService = new DealingService(tarotTable);
+            List<Player> players = Musketeers(5);            
+            DealingService dealingService = new DealingService(true, players);
 
             var defender = players.First();
             defender.Attacker = false;
@@ -108,16 +146,19 @@ namespace TarotFrTests
         [Test]
         public void FivePlayersCalledKingInAsideOneAttacker()
         {
-            List<Player> players = Musketeers(5);
-            TarotTable tarotTable = new TarotTable(true, true, players);
-            DealingService dealingService = new DealingService(tarotTable);
+            List<Player> players = Musketeers(5);            
             PlayerService playerService = new PlayerService();
+            DealingService dealingService = new DealingService(true, players);
             DealingRules rules = new DealingRules();
-
+            var dealingServiceMock = new Mock<IDealingService>().Setup(x => x.SendCardsToAside(Kings()));
+            
             players.First().Dealer = true;
             players.First().Attacker = true;
 
-            Assert.Fail("Use Mock you fool");
+            Player calledPlayer = dealingService.AttackerCallsKing(players.First());
+
+            Assert.That(players.Count(x => x.Attacker is false), Is.EqualTo(4));
+            Assert.That(players.First(), Is.SameAs(calledPlayer));
         }
     }
 }

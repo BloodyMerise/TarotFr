@@ -27,19 +27,18 @@ namespace TarotFrTests.Api
         {                        
             PlayerService ps = new PlayerService();                       
             List<Player> players = ps.CreatePlayers(Musketeers().Take(nbPlayers)).ToList();
-
-            TarotTable tb = new TarotTable(true, true, players);
+            
             DealingRules dr = new DealingRules();
-            DealingService ds = new DealingService(tb);
-            BettingService bs = new BettingService(tb);
+            DealingService ds = new DealingService(false, players);
+            BettingService bs = new BettingService();
 
             players.First().Dealer = true;
             ds.DealsAllCardsFromDeck();
             
-            Assert.That(tb.NbPlayers(), Is.EqualTo(nbPlayers));
-            Assert.That(tb.CountAside(), Is.EqualTo(dr.AsideMaxCards(nbPlayers)));
-            Assert.NotNull(tb.GetDealer());
-            Assert.Zero(tb.GetRoundNumber());
+            Assert.That(ds.NbPlayers(), Is.EqualTo(nbPlayers));
+            Assert.That(ds.CountAside(), Is.EqualTo(dr.AsideMaxCards(nbPlayers)));
+            Assert.NotNull(ds.GetDealer());
+            Assert.Zero(ds.GetRoundNumber());
                         
             foreach (Player player in players)
             {
@@ -47,24 +46,16 @@ namespace TarotFrTests.Api
                 Assert.That(player.Contract.ToString(), Is.EqualTo("pass"));
             }
 
-            bs.GatherBets(tb);
-            bs.SetBetWinnerAsAttacker();        
-            
-            Assert.That( players.Count(x => x.Attacker is true) == 1); // only  1 attacker is known at this stage
-
+            bs.GatherBets(players);
+            bs.AuctionIsWon(ds);
             Player attacker = players.FirstOrDefault(x => x.Attacker is true);
-            tb.SendAsideToPlayerHand(attacker);
-            
+
+            Assert.That( players.Count(x => x.Attacker is true) == 1); // only  1 attacker is known at this stage
+                                
             ps.MakeAside(attacker,dr.AsideMaxCards(nbPlayers));
 
             Assert.That(attacker.Hand.Count, Is.EqualTo(players.FirstOrDefault(x => x.Attacker is false).Hand.Count));            
             Assert.That(attacker.WonHands.Count, Is.EqualTo(dr.AsideMaxCards(nbPlayers)));
-
-            if(nbPlayers == 5)
-            {
-                ds.AttackerCallsKing(attacker);                
-            }
-            
         }
     }
 }

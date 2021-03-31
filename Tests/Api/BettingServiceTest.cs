@@ -42,11 +42,10 @@ namespace TarotFrTests.Api
         [TestCase(5)]
         public void RegisteredBetsMatchForAllPlayers(int nbPlayers)
         {
-            List<Player> players = Musketeers(nbPlayers);
-            TarotTable tb = new TarotTable(false, false, players);
-            BettingService bs = new BettingService(tb);
+            List<Player> players = Musketeers(nbPlayers);            
+            BettingService bs = new BettingService();
             
-            bs.GatherBets(tb);
+            bs.GatherBets(players);
 
             Assert.That(bs.RegisteredBets().Count == nbPlayers);
 
@@ -56,31 +55,18 @@ namespace TarotFrTests.Api
                 Assert.That(registeredBets[player].ToString() == player.Contract.ToString());
             }
         }
-
-        [Test]
-        public void RoundIsZeroAfterGatherBets()
-        {
-            List<Player> players = Musketeers(3);
-            TarotTable tb = new TarotTable(false, false, players);
-            BettingService bs = new BettingService(tb);
-
-            bs.GatherBets(tb);
-
-            Assert.Zero(tb.GetRoundNumber());
-        }
-
+        
         [Test]
         public void ListAvailableContracts()
         {
-            List<Player> players = Musketeers(5);
-            TarotTable tb = new TarotTable(false, false, players);
-            BettingService bs = new BettingService(tb);
+            List<Player> players = Musketeers(5);        
+            BettingService bs = new BettingService();
             List<Contract> allContracts = AllContracts();
 
             var availableBets = bs.AvailableBets();
             CollectionAssert.AreEquivalent(availableBets.Select(x => x.ToString()), allContracts.Select(x => x.ToString()));
 
-            bs.GatherBets(tb);
+            bs.GatherBets(players);
             availableBets = bs.AvailableBets();
             var winningBet = bs.GetWinningBet();
             var onlyGreatersPlusPass = allContracts.Where(x => x > winningBet.Value).Select(x => x.ToString()).ToList();
@@ -100,12 +86,12 @@ namespace TarotFrTests.Api
         public void PlayerWithWinningContractIsAttacker()
         {
             List<Player> players = Musketeers(5);
-            TarotTable tb = new TarotTable(false, false, players);
-            BettingService bs = new BettingService(tb);
+            DealingService ds = new DealingService(true,players);
+            BettingService bs = new BettingService();
 
-            bs.GatherBets(tb);
+            bs.GatherBets(players);
             var bet = bs.GetWinningBet();
-            bs.SetBetWinnerAsAttacker();
+            bs.AuctionIsWon(ds);
 
             Assert.True(bet.Key.Attacker);
         }

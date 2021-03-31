@@ -23,7 +23,7 @@ namespace TarotFr.Domain
             }
         }
 
-        public bool CardAllowedInAside(bool trumper, bool oudler, int rank)
+        public bool CardAllowedInPlayerAside(bool trumper, bool oudler, int rank)
         {
             if (trumper) return false;
             if (oudler) return false;

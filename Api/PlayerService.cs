@@ -46,7 +46,7 @@ namespace TarotFr.Api
             DealingRules dr = new DealingRules();
             IEnumerable<Card> cardsInHand = player.Hand.Cast<Card>();
 
-            var possibleAsideCards = cardsInHand.Where(x => dr.CardAllowedInAside(x.IsTrumper(), x.IsOudler(), x.Points())).ToList();
+            var possibleAsideCards = cardsInHand.Where(x => dr.CardAllowedInPlayerAside(x.IsTrumper(), x.IsOudler(), x.Points())).ToList();
 
             if (possibleAsideCards.Count() == 0)
             {

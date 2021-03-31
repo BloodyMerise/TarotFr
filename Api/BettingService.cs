@@ -11,7 +11,7 @@ namespace TarotFr.Api
         public Dictionary<Player, Contract> RegisteredBets() => _bets;
         private PlayerService _ps = new PlayerService();
 
-        public BettingService(TarotTable table)
+        public BettingService()
         {
             _bets = new Dictionary<Player, Contract>();
         }
@@ -22,26 +22,30 @@ namespace TarotFr.Api
             player.Contract = contract;
         }
 
-        public void GatherBets(TarotTable table)
+        public void GatherBets(List<Player> players)
         {
-            var availableBets = AvailableBets();
+            var availableBets = AvailableBets();            
             
-            while (table.GetRoundNumber() == 0)
+            foreach (var player in players)
             {
-                Player nextPlayer = table.NextPlayer();
-                Contract bet = _ps.AskForBet(nextPlayer, availableBets);
-                RegisterBets(nextPlayer, bet);
+                Contract bet = _ps.AskForBet(player, availableBets);
+                RegisterBets(player, bet);
             }
-
-            table.ResetRoundNumber();
 
             return;
         }
 
-        public void SetBetWinnerAsAttacker()
-        {
+        public void AuctionIsWon(DealingService ds)
+        {            
             var winningBet = GetWinningBet();
-            winningBet.Key.Attacker = true;
+            Player winner = winningBet.Key;
+
+            winner.Attacker = true;
+            ds.SendAsideToPlayerHand(winner);
+            if (_bets.Count == 5)
+            {                
+                ds.AttackerCallsKing(winner);
+            }
 
             return;
         }
