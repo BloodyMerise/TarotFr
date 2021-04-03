@@ -17,11 +17,12 @@ namespace TarotFr.Api
         {
             return new Player()
             {
-                Attacker = isAttacker,
-                Dealer = isDealer,
                 Name = name,
                 Hand = new List<object>(),
-                Contract = new Contract("pass")
+                Dealer = isDealer,
+                Attacker = isAttacker,
+                Contract = new Contract("pass"),
+                WonHands = new List<object>()                
             };
         }
 
@@ -41,8 +42,7 @@ namespace TarotFr.Api
         }
 
         public void MakeAside(Player player, int nbCards)
-        {
-            player.WonHands = new List<object>();
+        {            
             DealingRules dr = new DealingRules();
             IEnumerable<Card> cardsInHand = player.Hand.Cast<Card>();
 
@@ -53,31 +53,40 @@ namespace TarotFr.Api
                 throw new NotSupportedException("Cannot make aside without possible cards");
             }
 
-            var playerChoice = AskPlayerCard(player, possibleAsideCards, nbCards);
+            var playerChoice = AskPlayerCards(player, possibleAsideCards, nbCards);
             player.WonHands.AddRange(playerChoice);
             playerChoice.ForEach(x => player.Hand.Remove(x));            
         }
 
-        public List<Card> AskPlayerCard(Player player, IEnumerable<Card> choices, int nbCards)
+        public List<Card> AskPlayerCards(Player player, IEnumerable<Card> choices, int nbCards)
         {
-            List<Card> playerPicks = new List<Card>();
-            Random rnd = new Random();
-            
-            if(choices.Count() < nbCards)
+            if (choices.Count() < nbCards)
             {
                 throw new ArgumentException("Cannot ask more cards than given choice");
             }
 
+            List<Card> playerPicks = new List<Card>();
+            Random rnd = new Random();                       
+
             while (nbCards > 0)
             {
                 int cardIndex = rnd.Next(choices.Except(playerPicks).Count());
-
-                playerPicks.Add(choices.Except(playerPicks).ElementAt(cardIndex));
-                                
+                playerPicks.Add(choices.Except(playerPicks).ElementAt(cardIndex));                                
                 nbCards--;
             }
 
             return playerPicks;
+        }
+
+        public Card AskPlayerCard(Player player, IEnumerable<Card> choices)
+        {                    
+            if (choices.Count() < 1)
+            {
+                throw new ArgumentException("Cannot ask more cards than given choice");
+            }
+
+            Random rnd = new Random();            
+            return choices.ElementAt(rnd.Next(choices.Count()));
         }
 
         public void MakeDealer(Player player)

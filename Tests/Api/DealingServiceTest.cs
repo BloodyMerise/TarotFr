@@ -53,7 +53,7 @@ namespace TarotFrTests
             {
                 totalCardsInHand += playerService.CountCardsInHand(player);
                 Assert.AreEqual(players[0].Hand.Count(), player.Hand.Count()); //all players have same nb cards
-                Assert.IsNull(player.WonHands); //no player has an aside
+                Assert.IsEmpty(player.WonHands); //no player has an aside
             }
 
             Assert.AreEqual(DealingRules.MaxCardsInDeck, totalCardsInHand + dealingService.CountAside()); //all cards are dealt

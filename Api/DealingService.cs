@@ -19,7 +19,9 @@ namespace TarotFr.Api
         public void ResetRoundNumber() => _round.ResetRoundNumber();
 
         public int CountAside() => _aside.Count;
-        public bool CheckAside() => CountAside() == _rules.AsideMaxCards(NbPlayers());
+        public bool DealtAsideIsCorrect() => CountAside() == _rules.AsideMaxCards(NbPlayers());
+        public int NbCardsInAside() => _rules.AsideMaxCards(NbPlayers());
+
         bool IDealingService.NoMoreCardsInDeckAfterDealing() => _deck.IsEmpty() && _ps.CountCardsInHand(NextPlayer()) > 0;
         
         public DealingService(bool startsFromLeft, List<Player> players)
@@ -106,7 +108,7 @@ namespace TarotFr.Api
                 new Card("spades",14)
             };
 
-            var calledKing = _ps.AskPlayerCard(player, kings, 1).FirstOrDefault();
+            Card calledKing = _ps.AskPlayerCard(player, kings);
 
             while(GetRoundNumber() == 0)
             {

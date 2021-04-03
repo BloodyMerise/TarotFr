@@ -5,7 +5,7 @@ namespace TarotFr.Domain
     public interface IDealingService
     {
         bool NoMoreCardsInDeckAfterDealing();        
-        bool CheckAside();
+        bool DealtAsideIsCorrect();
         bool CheckPlayersHaveSameNbCardsInHand();
         bool TableHasDealer();
         void DealsAllCardsFromDeck();
