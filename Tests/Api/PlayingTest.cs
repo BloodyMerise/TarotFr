@@ -65,7 +65,6 @@ namespace TarotFrTests.Api
             Assert.Zero(dealingService.GetRoundNumber());
 
             List<Card> cardPlayedThisRound = new List<Card>();
-
             while (dealer.Hand.Count > 0)
             {
                 Player nextPlayer = dealingService.NextPlayer();

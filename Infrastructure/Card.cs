@@ -17,10 +17,13 @@ namespace TarotFr.Infrastructure
 
         public CardColors Color;
         private FaceValue _faceValue;
-        private readonly double _cardScore;
+        private readonly double _cardScore;        
         private readonly bool _isOudler;
-
+        private bool _isFirst;
+        
         public bool IsOudler() => _isOudler;
+        private bool IsFirst() => _isFirst;
+        
         public bool IsTrumper() => Color.Equals(CardColors.trumpers);
         public string getColorAsString() => Color.ToString();
         public int Points() => _faceValue.GetPoints();        
@@ -37,21 +40,39 @@ namespace TarotFr.Infrastructure
 
         public override string ToString()
         {
-            switch (_faceValue.GetPoints())
+            if (!IsTrumper())
             {
-                case 1:
-                    return $"Ace of {Color}";
-                case 11:
-                    return $"Jack of {Color}";
-                case 12:
-                    return $"Jumper of {Color}";
-                case 13:
-                    return $"Queen of {Color}";
-                case 14:
-                    return $"King of {Color}";
-                default:
-                    return $"{_faceValue.GetPoints()} of {Color}";
+                switch (_faceValue.GetPoints())
+                {
+                    case 1:
+                        return $"Ace of {Color}";
+                    case 11:
+                        return $"Jack of {Color}";
+                    case 12:
+                        return $"Jumper of {Color}";
+                    case 13:
+                        return $"Queen of {Color}";
+                    case 14:
+                        return $"King of {Color}";
+                    default:
+                        return $"{_faceValue.GetPoints()} of {Color}";
+                }
             }
+            else if (IsOudler())
+            {
+                switch (_faceValue.GetPoints())
+                {
+                    case 0:
+                        return "Excuse";
+                    case 1:
+                        return "Petit";
+                    case 21:
+                        return "21 of trumpers";
+                    default:
+                        throw new ArgumentException("Cannot describe an oudler with face value other than 0,1,21");
+                }
+            }
+            else return $"{_faceValue.GetPoints()} of {Color}";
         }
 
         private bool CheckOudler()
@@ -94,6 +115,8 @@ namespace TarotFr.Infrastructure
             else if (a.IsTrumper() && b.IsTrumper()) return (a.Points() > b.Points() ? true : false);
             else if (a.IsTrumper() && !b.IsTrumper()) return true;
             else if (!a.IsTrumper() && b.IsTrumper()) return false;
+            else if (a.IsFirst() && !b.IsTrumper() && !a.IsTrumper()) return true;
+            else if (b.IsFirst() && !b.IsTrumper() && !a.IsTrumper()) return false;
             else return (a.Points() > b.Points() ? true : false);
         }
 
@@ -101,6 +124,7 @@ namespace TarotFr.Infrastructure
 
         public static bool operator ==(Card a, Card b)
         {
+            if (a.IsFirst() || b.IsFirst()) return false;
             if (a.Points() != b.Points()) return false;
             else
             {
@@ -111,6 +135,11 @@ namespace TarotFr.Infrastructure
             }
         }
 
-        public static bool operator !=(Card a, Card b) => !(a == b);      
+        public static bool operator !=(Card a, Card b) => !(a == b);
+
+        public void SetIsFirst()
+        {
+            _isFirst = true;
+        }
     }
 }

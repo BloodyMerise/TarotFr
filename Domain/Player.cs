@@ -10,5 +10,6 @@ namespace TarotFr.Domain
         public bool Attacker { get; set; }
         public List<object> Hand { get; set; }
         public List<object> WonHands { get; set; }
+        public override string ToString() => Name;
     }
 }

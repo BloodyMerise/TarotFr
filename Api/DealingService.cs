@@ -12,7 +12,7 @@ namespace TarotFr.Api
         TarotDeck _deck;
         PlayerService _ps;
         List<Card> _aside;
-        private Round _round;
+        private RoundService _round;
 
         public int NbPlayers() => _round.GetNbPlayers();
         public int GetRoundNumber() => _round.RoundNumber;
@@ -30,7 +30,7 @@ namespace TarotFr.Api
             _deck = new TarotDeck(true);
             _rules = new DealingRules();            
             _aside = new List<Card>();
-            _round = new Round(startsFromLeft, players);
+            _round = new RoundService(startsFromLeft, players);
         }
         
         public void DealsAllCardsFromDeck()
@@ -76,7 +76,7 @@ namespace TarotFr.Api
             {
                 GetDealer();
             }
-            catch (NullReferenceException noDealer)
+            catch (NullReferenceException)
             {                
                 return false;
             }
