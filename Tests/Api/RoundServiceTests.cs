@@ -216,7 +216,9 @@ namespace TarotFr.Tests
             Assert.That(firstPlayer.Name, Is.EqualTo(winner.Name));
             Assert.Zero(winner.Hand.Count);
             Assert.That(roundService.RoundNumber, Is.EqualTo(1));
-            Assert.That(plays.Count, Is.EqualTo(nbPlayers));            
+            Assert.That(plays.Count, Is.EqualTo(nbPlayers));
+            Assert.That(winner.WonHands.Count, Is.EqualTo(nbPlayers));
+            Assert.That(players.Sum(x => x.WonHands.Count), Is.EqualTo(nbPlayers));
         }
         
         [Test]
@@ -237,7 +239,7 @@ namespace TarotFr.Tests
 
             var roundWinner = roundService.RoundWinner(roundPlay);
 
-            Assert.That(roundWinner.Name, Is.EqualTo(roundPlay.First().Item1.Name));
+            Assert.That(roundWinner.Name, Is.EqualTo(roundPlay.First().Item1.Name));            
         }
     }
 }

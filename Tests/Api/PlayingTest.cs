@@ -63,40 +63,14 @@ namespace TarotFrTests.Api
             Assert.That(attacker.Hand.Count, Is.EqualTo(players.FirstOrDefault(x => x.Attacker is false).Hand.Count));            
             Assert.That(attacker.WonHands.Count, Is.EqualTo(dealingRules.AsideMaxCards(nbPlayers)));
             Assert.Zero(dealingService.GetRoundNumber());
-
-            List<Card> cardPlayedThisRound = new List<Card>();
+            
             while (dealer.Hand.Count > 0)
             {
-                Player nextPlayer = dealingService.NextPlayer();
-                List<Card> hand = nextPlayer.Hand.Cast<Card>().ToList();
-                Card playerPlay;
-                if (cardPlayedThisRound.Count == 0)
-                {
-                    playerPlay = playerService.AskPlayerCard(nextPlayer, hand);
-                }
-                else
-                {
-                    Card firstCard = cardPlayedThisRound.First();
-                    if(hand.Exists( x => x.Color == firstCard.Color))
-                    {
-                        playerPlay = playerService.AskPlayerCard(nextPlayer, hand.Where(x => x.Color == firstCard.Color));
-                    }
-                    else if(hand.Exists( x => x.Color == Card.CardColors.trumpers))
-                    {
-                        playerPlay = playerService.AskPlayerCard(nextPlayer, hand.Where(x => x.Color == Card.CardColors.trumpers));
-                    }
-                    else
-                    {
-                        playerPlay = playerService.AskPlayerCard(nextPlayer, hand);
-                    }                    
-                }
-
-                cardPlayedThisRound.Add(playerPlay);
-                nextPlayer.Hand.Remove(playerPlay);                
+                roundService.PlayRound();
             }
 
             Assert.Zero(players.Select(x => x.Hand.Count).Sum());
-            //Assert.That(players.Select(x => x.WonHands.Cast<Card>().Score()).Sum(), Is.EqualTo(CardCountingRules.MaxScore));
+            Assert.That(players.Select(x => x.WonHands.Cast<Card>().Score()).Sum(), Is.EqualTo(CardCountingRules.MaxScore));
         }
     }
 }
