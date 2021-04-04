@@ -54,8 +54,7 @@ namespace TarotFrTests.Api
             Player attacker = players.FirstOrDefault(x => x.Attacker is true);
 
             Assert.That(players.Count(x => x.Attacker is true) == 1); // only  1 attacker is known at this stage
-            
-                                
+                                            
             playerService.MakeAside(attacker, dealingService.NbCardsInAside());
 
             // Put this in dealing service ?

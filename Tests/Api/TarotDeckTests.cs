@@ -94,8 +94,8 @@ namespace TarotFrTests
             TarotDeck deck = new TarotDeck(false);
             List<Card> allCards = deck.Pop(DealingRules.MaxCardsInDeck).ToList();
 
-            Assert.AreEqual(14, allCards.Where(x => x.getColorAsString() == "hearts").Count());
-            Assert.AreEqual(22, allCards.Where(x => x.getColorAsString() == "trumpers").Count());
+            Assert.AreEqual(14, allCards.Where(x => x.GetColorAsString() == "hearts").Count());
+            Assert.AreEqual(22, allCards.Where(x => x.GetColorAsString() == "trumpers").Count());
             Assert.AreEqual(5, allCards.Where(x => x.Points() == 1).Count());
             Assert.AreEqual(78, allCards.Count());
         }

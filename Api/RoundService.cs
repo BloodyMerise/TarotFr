@@ -129,20 +129,19 @@ namespace TarotFr.Api
         }
 
         public IEnumerable<Card> GetPlayableCardsForPlayer(Player player,IEnumerable<Card> cardsPlayed)
-        {
+        {            
             List<Card> playerHand = player.Hand.Cast<Card>().ToList();
-            Card firstCard = cardsPlayed.Count() == 0 ? new Card("trumpers", 0) : cardsPlayed.First();
-            
-            //If excuse is played first, can play any card
-            if(firstCard.IsOudler() && firstCard.Points() == 0)
+            List<Card> possibleCards = new List<Card>();
+            Card excuse = new Card("trumpers", 0);
+            Card firstCard = cardsPlayed.Count() == 0 ? excuse : cardsPlayed.First();
+
+            // If excuse is played first, can play any card
+            // also default if no card is played
+            if (firstCard == excuse)
             {
                 return playerHand;
             }
-
-            //Can always play Excuse if player has it
-            //TODO: excuse is lost if played on last hand
-            List<Card> possibleCards = player.Hand.Cast<Card>().Where(x => x.IsOudler() && x.Points() == 0).ToList();
-
+            
             //Must play asked color if player has any
             if (playerHand.Select(x => x.Color).Contains(firstCard.Color))
             {
@@ -163,13 +162,18 @@ namespace TarotFr.Api
             //If player doesn't have same color nor trumper, player can play any card
             else return playerHand;
 
+            if (playerHand.Contains(excuse) && !possibleCards.Contains(excuse))
+            {
+                possibleCards.Add(excuse);
+            }
+
             return possibleCards;
         }
 
         public IEnumerable<Card> GetPossibleTrumpersOrDefault(List<Card> playerHand, IEnumerable<Card> cardsPlayed)
         {            
             var highestTrumper = cardsPlayed.Where(x => x.IsTrumper()).Max();
-            playerHand.Remove(new Card("trumpers", 0)); // remove Excuse from possibilities -> handled before
+            playerHand.Remove(new Card("trumpers", 0)); // excuse is not handled here
 
             // if no trumper is played, can play any trumper
             if (highestTrumper is null && playerHand.Count(x => x.IsTrumper()) > 0)

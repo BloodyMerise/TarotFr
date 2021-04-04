@@ -25,7 +25,7 @@ namespace TarotFr.Infrastructure
         private bool IsFirst() => _isFirst;
         
         public bool IsTrumper() => Color.Equals(CardColors.trumpers);
-        public string getColorAsString() => Color.ToString();
+        public string GetColorAsString() => Color.ToString();
         public int Points() => _faceValue.GetPoints();        
         public double Score() => _cardScore;
         
