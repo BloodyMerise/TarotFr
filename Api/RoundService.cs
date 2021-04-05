@@ -109,10 +109,17 @@ namespace TarotFr.Api
             PlayerService playerService = new PlayerService();
             List<Tuple<Player, Card>> cardsPlayedThisRound = new List<Tuple<Player, Card>>();
             SetCurrentPlayer(PlayerStartingRound());
-            Card playerPlay;
+            Card playerPlay;            
 
             while (cardsPlayedThisRound.Count < GetNbPlayers())
             {
+                // Ask if current player declare Misere/Handful if possible
+                if (RoundNumber == 0)
+                {
+                    playerService.AskForHandful(_currentPlayer);                        
+                    playerService.AskForMisere(_currentPlayer);                    
+                }
+
                 IEnumerable<Card> possibleCardsThisRound = GetPlayableCardsForPlayer(_currentPlayer, cardsPlayedThisRound.Select(x => x.Item2));
                 playerPlay = playerService.AskPlayerCard(_currentPlayer, possibleCardsThisRound);
                 cardsPlayedThisRound.Add(new Tuple<Player, Card>(_currentPlayer, playerPlay));
@@ -135,9 +142,14 @@ namespace TarotFr.Api
 
             // If excuse is played first, can play any card
             // also default if no card is played
-            if (firstCard == excuse)
+            if (firstCard == excuse && cardsPlayed.Count() == 0)
             {
                 return playerHand;
+            }
+            // If excuse was played first, second card is driving the color
+            else if (firstCard == excuse && cardsPlayed.Count() > 1)
+            {
+                firstCard = cardsPlayed.ToList()[1];
             }
             
             //Must play asked color if player has any

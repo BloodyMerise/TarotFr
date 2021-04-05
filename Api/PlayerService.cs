@@ -104,5 +104,29 @@ namespace TarotFr.Api
             if (!player.Attacker) throw new ArgumentException("Only attackers can have target score");
             player.TargetScore = CardCountingRules.TargetScore(player.Hand.Cast<Card>().Count(x => x.IsOudler()));
         }
+
+        public bool CanDeclareHandful(Player player)
+        {
+            return CardCountingRules.HasHandful(player.Hand.Cast<Card>().Count(x => x.IsTrumper()));
+        }
+
+        public bool CanDeclareMisere(Player player)
+        {
+            return CardCountingRules.HasMisere(player.Hand.Cast<Card>().Count(x => !x.IsTrumper() && x.Points() > 10));
+        }
+
+        // Later should prompt user if he wants to disclose this
+        // and implement the card disclosure as well
+        public void AskForHandful(Player player)
+        {
+            if (CanDeclareHandful(player)) player.HasHandful = true;
+        }
+
+        // Later should prompt user if he wants to disclose this
+        // and implement the card disclosure as well
+        public void AskForMisere(Player player)
+        {
+            if (CanDeclareMisere(player)) player.HasMisere = true;
+        }
     }
 }

@@ -160,5 +160,36 @@ namespace TarotFrTests.Api
             Assert.That(playableCards.Count, Is.EqualTo(1));
             Assert.That(playableCards.First(), Is.EqualTo(eighteenTrumper));
         }
+
+        [TestCase("clubs",3)]
+        [TestCase("trumpers", 3)]
+        [TestCase("trumpers", 21)]
+        public void ExcusePlayedFirstMakesColorMustFollowSecondCard(string secondCardColor, int secondCardRank)
+        {
+            PlayerService ps = new PlayerService();            
+            Player player = ps.CreatePlayer("ASdASd",false,false);
+            RoundService rs = new RoundService(true, new List<Player>() { player });
+            Card excuse = new Card("trumpers", 0);
+            Card secondCardPlayed = new Card(secondCardColor, secondCardRank);
+            Card expectedOnlyPlayableCard = new Card(secondCardColor, 14);
+
+            player.Hand = new List<object>()
+            {
+                new Card("hearts",2),
+                new Card("spades",4),
+                expectedOnlyPlayableCard
+            };
+
+            List<Card> playedCards = new List<Card>()
+            {
+                excuse,
+                secondCardPlayed
+            };
+
+            List<Card> playableCards = rs.GetPlayableCardsForPlayer(player, playedCards).ToList();
+
+            Assert.That(playableCards.Count, Is.EqualTo(1));
+            Assert.That(playableCards.First(), Is.EqualTo(expectedOnlyPlayableCard));
+        }
     }
 }

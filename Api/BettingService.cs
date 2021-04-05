@@ -41,11 +41,13 @@ namespace TarotFr.Api
             Player winner = winningBet.Key;
 
             winner.Attacker = true;
-            ds.SendAsideToPlayerHand(winner);
+            
             if (_bets.Count == 5)
             {                
                 ds.AttackerCallsKing(winner);
             }
+
+            ds.SendAsideToPlayerHand(winner);
 
             return;
         }

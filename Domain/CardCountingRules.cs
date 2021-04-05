@@ -36,5 +36,8 @@ namespace TarotFr.Domain
                     throw new NotImplementedException();
             };                
         }
+
+        public static bool HasHandful(int nbTrumpersInHand) => nbTrumpersInHand > 8 ? true : false;
+        public static bool HasMisere(int nbHeadsInHand) => nbHeadsInHand == 0 ? true : false;        
     }
 }
