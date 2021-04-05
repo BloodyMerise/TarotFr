@@ -133,23 +133,23 @@ namespace TarotFr.Api
             return cardsPlayedThisRound;
         }
 
-        public IEnumerable<Card> GetPlayableCardsForPlayer(Player player,IEnumerable<Card> cardsPlayed)
+        public IEnumerable<Card> GetPlayableCardsForPlayer(Player player,IEnumerable<Card> cardsAlreadyPlayed)
         {            
             List<Card> playerHand = player.Hand.Cast<Card>().ToList();
             List<Card> possibleCards = new List<Card>();
             Card excuse = new Card("trumpers", 0);
-            Card firstCard = cardsPlayed.Count() == 0 ? excuse : cardsPlayed.First();
+            Card firstCard = cardsAlreadyPlayed.Count() == 0 ? excuse : cardsAlreadyPlayed.First();
 
             // If excuse is played first, can play any card
             // also default if no card is played
-            if (firstCard == excuse && cardsPlayed.Count() == 0)
+            if (firstCard == excuse && cardsAlreadyPlayed.Count() <= 1 )
             {
                 return playerHand;
             }
             // If excuse was played first, second card is driving the color
-            else if (firstCard == excuse && cardsPlayed.Count() > 1)
+            else if (firstCard == excuse && cardsAlreadyPlayed.Count() > 1)
             {
-                firstCard = cardsPlayed.ToList()[1];
+                firstCard = cardsAlreadyPlayed.ToList()[1];
             }
             
             //Must play asked color if player has any
@@ -157,7 +157,7 @@ namespace TarotFr.Api
             {
                 if (firstCard.IsTrumper())
                 {
-                    possibleCards.AddRange(GetPossibleTrumpersOrDefault(playerHand, cardsPlayed));
+                    possibleCards.AddRange(GetPossibleTrumpersOrDefault(playerHand, cardsAlreadyPlayed));
                 }
                 else
                 {
@@ -167,7 +167,7 @@ namespace TarotFr.Api
             //If player doesn't have the first color, check if player can play trumper
             else if (playerHand.Count(x => x.IsTrumper()) > 0)
             {
-               possibleCards.AddRange(GetPossibleTrumpersOrDefault(playerHand, cardsPlayed));
+               possibleCards.AddRange(GetPossibleTrumpersOrDefault(playerHand, cardsAlreadyPlayed));
             }
             //If player doesn't have same color nor trumper, player can play any card
             else return playerHand;
