@@ -267,6 +267,7 @@ namespace TarotFr.Tests
             roundService.PlayRound();
 
             Assert.That(playerWithExcuse.WonHands.Contains(excuse), Is.False);
+            Assert.That(players.Count(x => x.WonHands.Contains(excuse)), Is.EqualTo(1));
             Assert.That(players.Where(x => x.WonHands.Contains(excuse)).Select(x => x.Attacker).First(), Is.EqualTo(!playerWithExcuseIsAttacker));
         }
     }

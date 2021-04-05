@@ -9,5 +9,6 @@ namespace TarotFr.Domain
         void MakeDealer(Player player);
         void DealsCards(IEnumerable<Card> cards, Player player);
         Contract AskForBet(Player player, List<Contract> choices);
+        void SetTargetScore(Player player);
     }
 }

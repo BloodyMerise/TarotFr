@@ -1,4 +1,6 @@
-﻿namespace TarotFr.Domain
+﻿using System;
+
+namespace TarotFr.Domain
 {
     public static class CardCountingRules
     {
@@ -16,6 +18,23 @@
             if (oudler) return OudlerScore;
             else if (trumper) return TrumperScore;
             else return BasicScore(rank);
-        }            
+        }
+        
+        public static double TargetScore(int nbOudlersInHand)
+        {
+            switch (nbOudlersInHand)
+            {
+                case 0:
+                    return 56;
+                case 1:
+                    return 51;
+                case 2:
+                    return 41;
+                case 3:
+                    return 36;
+                default:
+                    throw new NotImplementedException();
+            };                
+        }
     }
 }

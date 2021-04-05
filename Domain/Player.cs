@@ -6,6 +6,7 @@ namespace TarotFr.Domain
     {
         public Contract Contract { get; set; }
         public string Name;
+        public double TargetScore;
         public bool Dealer { get; set; }
         public bool Attacker { get; set; }
         public List<object> Hand { get; set; }
