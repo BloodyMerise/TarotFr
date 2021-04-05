@@ -241,5 +241,33 @@ namespace TarotFr.Tests
 
             Assert.That(roundWinner.Name, Is.EqualTo(roundPlay.First().Item1.Name));            
         }
+
+        [Theory]
+        public void ExcuseIsLostIfPlayedLast(bool playerWithExcuseIsAttacker)
+        {
+            int nbPlayers = 4;
+            Card excuse = new Card("trumpers", 0);
+            Card otherCard = new Card("spades", 14);
+            List<Player> players = PlayerGenerator(nbPlayers).ToList();
+            RoundService roundService = new RoundService(false, players);
+
+            foreach(var player in players)
+            {
+                player.Hand.Add(otherCard);                
+            }
+
+            //need one attacker, to check that the excuse changes team
+            if (!playerWithExcuseIsAttacker) { players.Last().Attacker = true; }
+
+            var playerWithExcuse = players.First();
+            playerWithExcuse.Hand = new List<object>() { excuse };
+            playerWithExcuse.Attacker = playerWithExcuseIsAttacker;
+            playerWithExcuse.Dealer = true;
+
+            roundService.PlayRound();
+
+            Assert.That(playerWithExcuse.WonHands.Contains(excuse), Is.False);
+            Assert.That(players.Where(x => x.WonHands.Contains(excuse)).Select(x => x.Attacker).First(), Is.EqualTo(!playerWithExcuseIsAttacker));
+        }
     }
 }

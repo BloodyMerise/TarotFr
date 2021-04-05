@@ -150,7 +150,7 @@ namespace TarotFrTests
             PlayerService playerService = new PlayerService();
             DealingService dealingService = new DealingService(true, players);
             DealingRules rules = new DealingRules();
-            var dealingServiceMock = new Mock<IDealingService>().Setup(x => x.SendCardsToAside(Kings()));
+            //var dealingServiceMock = new Mock<IDealingService>().Setup(x => x.SendCardsToAside(Kings()));
             
             players.First().Dealer = true;
             players.First().Attacker = true;

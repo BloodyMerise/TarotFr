@@ -120,10 +120,8 @@ namespace TarotFr.Api
                 NextPlayer();
             }
 
-            Player roundWinner = RoundWinner(cardsPlayedThisRound);
-            roundWinner.WonHands.AddRange(cardsPlayedThisRound.Select(x => x.Item2));
-
             _cardsPlayed.Push(cardsPlayedThisRound);
+            EndRound(cardsPlayedThisRound);
                        
             return cardsPlayedThisRound;
         }
@@ -190,12 +188,34 @@ namespace TarotFr.Api
             {
                 return playerHand.Where(x => x.IsTrumper());
             }
-            // If player doesn't have any trumper, but should play one, he must play any other card
+            // If player doesn't have any trumper, but should play one, can play any other card
             else
             {
                 return playerHand;
             }
-        }            
+        }
+
+        private void EndRound(List<Tuple<Player, Card>> cardsPlayedThisRound)
+        {
+            Player roundWinner = RoundWinner(cardsPlayedThisRound);
+            roundWinner.WonHands.AddRange(cardsPlayedThisRound.Select(x => x.Item2));
+            Card excuse = new Card("trumpers", 0);
+            
+            if (cardsPlayedThisRound.Select(x => x.Item2).Contains(excuse))
+            {
+                Player playerWithExcuse = cardsPlayedThisRound.Where(x => x.Item2 == excuse).Select(x => x.Item1).First();
+                roundWinner.WonHands.Remove(excuse);
+
+                if (roundWinner.Hand.Count == 0) //excuse goes to opponent if played last
+                {                    
+                    cardsPlayedThisRound.First(x => x.Item1.Attacker != playerWithExcuse.Attacker).Item1.WonHands.Add(excuse);                    
+                }
+                else
+                {
+                    playerWithExcuse.WonHands.Add(excuse);
+                }
+            }            
+        }
     }
 }
 

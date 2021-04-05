@@ -65,11 +65,12 @@ namespace TarotFrTests.Api
             
             while (dealer.Hand.Count > 0)
             {
-                roundService.PlayRound();
+                var round = roundService.PlayRound();                
             }
 
             Assert.Zero(players.Select(x => x.Hand.Count).Sum());
-            Assert.That(players.Select(x => x.WonHands.Cast<Card>().Score()).Sum(), Is.EqualTo(CardCountingRules.MaxScore));
+            Assert.That(players.Select(x => x.WonHands.Count).Sum(), Is.EqualTo(DealingRules.MaxCardsInDeck));
+            Assert.That(players.Select(x => x.WonHands.Cast<Card>().Score()).Sum(), Is.EqualTo(CardCountingRules.MaxScore));            
         }
     }
 }
