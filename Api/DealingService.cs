@@ -109,20 +109,17 @@ namespace TarotFr.Api
             };
 
             Card calledKing = _ps.AskPlayerCard(player, kings);
+            Player calledPlayer = _round.FindPlayerWithCard(calledKing);
 
-            while(GetRoundNumber() == 0)
+            if (calledPlayer is null)
             {
-                var nextPlayer = NextPlayer();
-                if (nextPlayer.Hand.Contains(calledKing as object))
-                {
-                    ResetRoundNumber();
-                    return nextPlayer;
-                }
+                return player;
             }
-            ResetRoundNumber();
-
-            //King is in aside (maybe more defensive programming here?)
-            return player;            
+            else
+            {
+                calledPlayer.Attacker = true;
+                return calledPlayer;
+            }
         }
 
         public Player NextPlayer(Player player)

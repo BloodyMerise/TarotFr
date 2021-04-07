@@ -52,15 +52,13 @@ namespace TarotFrTests.Api
             bettingService.GatherBets(players);
             bettingService.AuctionIsWon(dealingService);
             Player attacker = players.FirstOrDefault(x => x.Attacker is true);
-
-            Assert.That(players.Count(x => x.Attacker is true) == 1); // only  1 attacker is known at this stage
-                                            
+            
             playerService.MakeAside(attacker, dealingService.NbCardsInAside());
 
             // Put this in dealing service ?
             // Game is ready to start when:
             Assert.That(attacker.Hand.Count, Is.EqualTo(players.FirstOrDefault(x => x.Attacker is false).Hand.Count));            
-            Assert.That(attacker.WonHands.Count, Is.EqualTo(dealingRules.AsideMaxCards(nbPlayers)));
+            Assert.That(attacker.WonHands.Count, Is.EqualTo(dealingRules.AsideMaxCards(nbPlayers)));            
             Assert.Zero(dealingService.GetRoundNumber());
             
             while (dealer.Hand.Count > 0)

@@ -37,7 +37,7 @@ namespace TarotFrTests
             Player maurice = _ps.CreatePlayer("Maurice", true, true);
             for(int i = 0; i < oudlersQuantity; i++)
             {
-                maurice.Hand.Add(new Card("trumpers", 1));
+                maurice.WonHands.Add(new Card("trumpers", 1));
             }
 
             _ps.SetTargetScore(maurice);

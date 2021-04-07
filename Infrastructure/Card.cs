@@ -34,6 +34,7 @@ namespace TarotFr.Infrastructure
             Color = (CardColors) Enum.Parse(typeof(CardColors), color, true); 
             _faceValue = new FaceValue(points);
             _isOudler = CheckOudler();
+            _isFirst = false;
             _cardScore = CardCountingRules.GetPoints(IsTrumper(), _isOudler, _faceValue.GetPoints());
             CheckConsistency();
         }
@@ -124,6 +125,7 @@ namespace TarotFr.Infrastructure
 
         public static bool operator ==(Card a, Card b)
         {
+            if (a is null || b is null) return false;
             if (a.IsFirst() || b.IsFirst()) return false;
             if (a.Points() != b.Points()) return false;
             else
@@ -140,6 +142,22 @@ namespace TarotFr.Infrastructure
         public void SetIsFirst()
         {
             _isFirst = true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var card = obj as Card;
+            return card != null &&
+                   Color == card.Color &&
+                   EqualityComparer<FaceValue>.Default.Equals(_faceValue, card._faceValue);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -666200540;
+            hashCode = hashCode * -1521134295 + Color.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<FaceValue>.Default.GetHashCode(_faceValue);
+            return hashCode;
         }
     }
 }

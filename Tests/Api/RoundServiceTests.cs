@@ -181,6 +181,19 @@ namespace TarotFr.Tests
             Assert.AreEqual(expectedNumberOfRounds, round.RoundNumber);
         }
 
+        [Test]
+        public void CandFindPlayerWhoHoldsCard()
+        {            
+            List<Player> players = PlayerGenerator(5).ToList();
+            RoundService rs = new RoundService(true, players);
+            Card excuse = new Card("trumpers", 0);
+            players.First().Hand.Add(excuse);
+
+            Player playerWithExcuse = rs.FindPlayerWithCard(excuse);
+
+            Assert.That(playerWithExcuse, Is.EqualTo(players.First()));
+        }
+
         [Theory]
         public void FirstRoundAlwaysStartsAfterDealer(bool startsFromLeft)
         {

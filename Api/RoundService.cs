@@ -87,6 +87,11 @@ namespace TarotFr.Api
             }
         }
 
+        public Player FindPlayerWithCard(Card card)
+        {            
+            return Players.FirstOrDefault(x => x.Hand.Cast<Card>().Count(y => y.ToString() == card.ToString()) > 0);
+        }
+
         public Player PlayerStartingRound()
         {
             if (_cardsPlayed.Count == 0)

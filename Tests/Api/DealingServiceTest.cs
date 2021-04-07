@@ -160,6 +160,25 @@ namespace TarotFrTests
             Assert.That(players.Count(x => x.Attacker is false), Is.EqualTo(4));
             Assert.That(players.First(), Is.SameAs(calledPlayer));
         }
+
+        [Test]
+        public void FivePlayersCallsKingMostCommonCase()
+        {
+            List<Player> players = Musketeers(5);
+            PlayerService playerService = new PlayerService();
+            DealingService dealingService = new DealingService(true, players);
+            DealingRules rules = new DealingRules();
+            Player attacker = players.First();
+            Player defender = players.Last();
+            attacker.Attacker = true;
+            attacker.Dealer = true;
+
+            defender.Hand.AddRange(Kings());
+            Player calledPlayer = dealingService.AttackerCallsKing(attacker);
+
+            Assert.That(players.Count(x => x.Attacker is false), Is.EqualTo(3));
+            Assert.That(defender, Is.SameAs(calledPlayer));
+        }
     }
 }
 
