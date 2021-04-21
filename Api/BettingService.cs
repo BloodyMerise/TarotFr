@@ -48,7 +48,7 @@ namespace TarotFr.Api
             }
 
             ds.SendAsideToPlayerHand(winner);
-
+            
             return;
         }
 

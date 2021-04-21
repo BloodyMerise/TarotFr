@@ -7,14 +7,14 @@ namespace TarotFr.Domain
     {
         public enum Contracts
         {
-            pass,
-            small,
-            push,
-            guard,
-            guardWithout,
-            guardAgainst,
-            smallChelem,
-            grandChelem
+            pass = 0,
+            small = 10,
+            push = 30,
+            guard = 60,
+            guardWithout = 100,
+            guardAgainst = 160,
+            smallChelem = 300,
+            grandChelem = 500
         }
         
         private Contracts _contract;
@@ -76,6 +76,6 @@ namespace TarotFr.Domain
         public override string ToString()
         {
             return _contract.ToString();
-        }
+        }        
     }
 }

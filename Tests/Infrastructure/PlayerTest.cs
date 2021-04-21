@@ -28,23 +28,6 @@ namespace TarotFrTests
             Assert.AreEqual(expectedNbCards, georgette.Hand.Count());
         }
         
-        [TestCase(0,56)]
-        [TestCase(1,51)]
-        [TestCase(2,41)]
-        [TestCase(3,36)]
-        public void TargetScoreIsCorrectForPlayer(int oudlersQuantity, int expectedScore)
-        {
-            Player maurice = _ps.CreatePlayer("Maurice", true, true);
-            for(int i = 0; i < oudlersQuantity; i++)
-            {
-                maurice.WonHands.Add(new Card("trumpers", 1));
-            }
-
-            _ps.SetTargetScore(maurice);
-
-            Assert.That(maurice.TargetScore, Is.EqualTo(expectedScore));
-        }
-
         [Test]
         public void PlayerWithHandfulIsDetected()
         {

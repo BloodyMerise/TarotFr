@@ -18,7 +18,7 @@ namespace TarotFrTests.Api
                 "Portos",
                 "Aramis",
                 "Albert"
-            };           
+            };
         }
 
         [TestCase(3)]
@@ -28,15 +28,15 @@ namespace TarotFrTests.Api
         {
             DealingRules dealingRules = new DealingRules();
             BettingService bettingService = new BettingService();
-            PlayerService playerService = new PlayerService();                       
-            List<Player> players = playerService.CreatePlayers(Musketeers().Take(nbPlayers)).ToList();                       
+            PlayerService playerService = new PlayerService();
+            List<Player> players = playerService.CreatePlayers(Musketeers().Take(nbPlayers)).ToList();
             DealingService dealingService = new DealingService(false, players);
             RoundService roundService = new RoundService(false, players);
-            
+
             Player dealer = players.First();
             dealer.Dealer = true;
             dealingService.DealsAllCardsFromDeck();
-            
+
             Assert.That(dealingService.NbPlayers(), Is.EqualTo(nbPlayers));
             Assert.That(dealingService.CountAside(), Is.EqualTo(dealingRules.AsideMaxCards(nbPlayers)));
             Assert.NotNull(dealingService.GetDealer());
@@ -51,24 +51,31 @@ namespace TarotFrTests.Api
 
             bettingService.GatherBets(players);
             bettingService.AuctionIsWon(dealingService);
-            Player attacker = players.FirstOrDefault(x => x.Attacker is true);
-            
+            Player attacker = bettingService.GetWinningBet().Key;
+
             playerService.MakeAside(attacker, dealingService.NbCardsInAside());
 
             // Put this in dealing service ?
             // Game is ready to start when:
-            Assert.That(attacker.Hand.Count, Is.EqualTo(players.FirstOrDefault(x => x.Attacker is false).Hand.Count));            
-            Assert.That(attacker.WonHands.Count, Is.EqualTo(dealingRules.AsideMaxCards(nbPlayers)));            
+            Assert.That(attacker.Hand.Count, Is.EqualTo(players.First(x => x.Attacker is false).Hand.Count));
+            Assert.That(attacker.WonHands.Count, Is.EqualTo(dealingRules.AsideMaxCards(nbPlayers)));
             Assert.Zero(dealingService.GetRoundNumber());
-            
+
             while (dealer.Hand.Count > 0)
             {
-                var round = roundService.PlayRound();                
+                var round = roundService.PlayRound();
             }
 
             Assert.Zero(players.Select(x => x.Hand.Count).Sum());
             Assert.That(players.Select(x => x.WonHands.Count).Sum(), Is.EqualTo(DealingRules.MaxCardsInDeck));
-            Assert.That(players.Select(x => x.WonHands.Cast<Card>().Score()).Sum(), Is.EqualTo(CardCountingRules.MaxScore));            
+            Assert.That(players.Select(x => x.WonHands.Cast<Card>().Score()).Sum(), Is.EqualTo(CardCountingRules.MaxScore));
+        }
+
+        [Test]
+        [Repeat(100)]
+        public void PlayOneHundredGames5()
+        {
+            PlayOneGame(5);           
         }
     }
 }

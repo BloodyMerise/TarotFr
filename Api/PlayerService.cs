@@ -99,12 +99,6 @@ namespace TarotFr.Api
             return player.Hand.Count;
         }
 
-        public void SetTargetScore(Player player)
-        {
-            if (!player.Attacker) throw new ArgumentException("Only attackers can have target score");
-            player.TargetScore = CardCountingRules.TargetScore(player.Hand.Cast<Card>().Count(x => x.IsOudler()));
-        }
-
         public bool CanDeclareHandful(Player player)
         {
             return CardCountingRules.HasHandful(player.Hand.Cast<Card>().Count(x => x.IsTrumper()));
